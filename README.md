@@ -33,7 +33,23 @@ side. If there is only one philosopher, there should be only one fork on the tab
 ## How to use
 
 ### Compilation
-(wip)
+1 - Clone the repository
+```
+git clone git@github.com:mxvements/ft_philo.git 
+```
+2 - Enter the project folder and run `make`, Makefile rules:
+```
+`make` - compile printf mandatory files
+`make all` - compile all (mandatory + bonus) files
+`make clean` - delete all *.o files
+`make fclean` - delete all *.o & *.a (executable) files
+`make re` - use fclean + all, recompile printf
+```
+3 - To incluide it in your code, include the header
+```
+# include "ft_philo.h""
+```
+
 
 ##  Overview
 
