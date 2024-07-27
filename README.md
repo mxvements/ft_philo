@@ -20,7 +20,8 @@ You will see how to create threads and you will discover mutexes.*
 | ------------ | ----- |
 | Turn in files | Makefile, *.h, *.c, in directory **philo/** |
 | Makefile | NAME, all, clean, fclean, re |
-| Arguments | number_of_philosophers, time_to_die, time_to_eat, time_to_sleep, [ number_of_times_each_philosopher_must_eat ] |
+| Arguments | number_of_philosophers, time_to_die, time_to_eat, time_to_sleep, [number_of_times_each_philosopher_must_eat] |
+| External functs | memset, printf, malloc, free, write, usleep, gettimeofday, pthread_create, pthread_detach, pthread_join, pthread_mutex_init, pthread_mutex_destroy, pthread_mutex_lock, pthread_mutex_unlock |
 | Libft Auth | NO |
 | Description | Philosophers with threads and mutexes |
 
@@ -98,7 +99,8 @@ and X with the philosopher number.
 | ------------ | ----- |
 | Turn in files | Makefile, *.h, *.c, in directory **philo_bonus/** |
 | Makefile | NAME, all, clean, fclean, re |
-| Arguments | number_of_philosophers, time_to_die, time_to_eat, time_to_sleep, [ number_of_times_each_philosopher_must_eat ] |
+| Arguments | number_of_philosophers, time_to_die, time_to_eat, time_to_sleep, [number_of_times_each_philosopher_must_eat] |
+| External functs | memset, printf, malloc, free, write, fork, kill, exit, pthread_create, pthread_detach, pthread_join, usleep, gettimeofday, waitpid, sem_open, sem_close, sem_post, sem_wait, sem_unlink |
 | Libft Auth | NO |
 | Description | Philosophers with threads and mutexes |
 
