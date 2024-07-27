@@ -24,10 +24,10 @@ static void	*count_to_big(void *arg)
 	
 	This example wont work with parallelism because of the increment in the
 	counter -> race condition
-		both threads have access to the same resources (memory)
-
-	Threads use the same memory, but they need to wait on each other to
-	do the increment on the counter, otherwise we would have a random result
+		both threads have access to the same resources (memory), so they access
+		to the same counter, if they dont wait for each other to do the increment
+		then we're missing some +1 while doing the loop, the final result is 
+		random
 */
 int	main(void)
 {
