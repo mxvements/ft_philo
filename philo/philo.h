@@ -40,4 +40,38 @@
 # define BG_GRAY "\x1B[48;2;176;174;174m"
 # define BG_ROSE "\x1B[48;2;255;151;203m"
 
+typedef pthread_mutex_t t_mtx;
+
+struct s_fork
+{
+	t_mtx	fork;
+	int		fork_id;
+}	t_fork;
+
+struct s_philo
+{
+	int				id;
+	long			meals_count;
+	bool			full;
+	long			last_meal_time; //time passed from last meal
+	struct s_fork	*left_fork;
+	struct s_fork	*right_fork;
+	pthread_t		thread_id; //a philo is a thread
+	struct s_table	*table;
+}	t_philo;
+
+struct s_table
+{
+	long			philo_nbr;
+	long			time_to_die;
+	long			time_to_eat;
+	long			time_to_sleep;
+	long			meal_limit;
+	long			time_start;
+	bool			end_flag; //whhen a philo dies or all philos are full
+	struct s_fork	*forks;
+	struct s_philo	*philos;
+
+}	t_table;
+
 #endif
