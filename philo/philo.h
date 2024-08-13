@@ -42,17 +42,17 @@
 
 typedef pthread_mutex_t t_mtx;
 
-struct s_fork
+typedef struct s_fork
 {
 	t_mtx	fork;
 	int		fork_id;
 }	t_fork;
 
-struct s_philo
+typedef struct s_philo
 {
 	int				id;
 	long			meals_count;
-	bool			full;
+	int				full; //(boolean)
 	long			last_meal_time; //time passed from last meal
 	struct s_fork	*left_fork;
 	struct s_fork	*right_fork;
@@ -60,7 +60,7 @@ struct s_philo
 	struct s_table	*table;
 }	t_philo;
 
-struct s_table
+typedef struct s_table
 {
 	long			philo_nbr;
 	long			time_to_die;
@@ -68,10 +68,18 @@ struct s_table
 	long			time_to_sleep;
 	long			meal_limit;
 	long			time_start;
-	bool			end_flag; //whhen a philo dies or all philos are full
+	int				end_flag; //  boolean, when a philo dies or all philos are full
 	struct s_fork	*forks;
 	struct s_philo	*philos;
 
 }	t_table;
+
+
+/* init philo*/
+int init_table(t_table *table, char **argv);
+// int init_philo();
+
+/* aux functions*/
+long	ft_atolf(char *s, int *flag);
 
 #endif

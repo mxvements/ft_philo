@@ -3,8 +3,14 @@ CC=gcc
 CFLAGS=-Wall -Wextra -Werror -g3
 
 #philo
-PHILO_PATH=		./philo/
-PHILO_FILES=	philo.c
+PHILO_PATH=		./
+PHILO_FILES=	philo.c \
+				philo_init.c \
+				ft_atolf.c
+
+#aux files
+# AUX_PATH=	./
+# AUX_FILES=	ft_atolh.c
 
 #objs
 OBJ_PATH=	obj/
