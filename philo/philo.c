@@ -1,12 +1,5 @@
-
 #include "philo.h"
 
-static int err_arguments(void)
-{
-	printf("Invaid number of arguments\n");
-	printf("Use exmapl: ./philo 5 800 200 200 [5]\n");
-	return (1);
-}
 /**
  * 	use example
  *  ./philo 5 800 200 200 [5]
@@ -20,13 +13,15 @@ static int err_arguments(void)
  */
 int	main(int argc, char **argv)
 {
-	t_table table;
+	t_table	table;
 
-	if (argc < 5 || argc > 6 )
-		return (err_arguments());
-
+	if (argc < 5 || argc > 6)
+		philo_exit("Invalid number of arguments\
+		\nExample: ./philo 5 800 200 200 (5)");
+	//table
 	memset((void *)&table, 0, sizeof(t_table)); //ft_bzero
 	init_table(&table, argv);
-	// init_philo();
+	print_table(&table);
+	//philosophers
 	return (0);
 }

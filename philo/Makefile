@@ -6,6 +6,8 @@ CFLAGS=-Wall -Wextra -Werror -g3
 PHILO_PATH=		./
 PHILO_FILES=	philo.c \
 				philo_init.c \
+				philo_exit.c \
+				philo_print.c \
 				ft_atolf.c
 
 #aux files

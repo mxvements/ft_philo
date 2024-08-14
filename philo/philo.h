@@ -76,7 +76,9 @@ typedef struct s_table
 
 
 /* init philo*/
-int init_table(t_table *table, char **argv);
+void	philo_exit(const char *error);
+int		init_table(t_table *table, char **argv);
+void	print_table(t_table *table);
 // int init_philo();
 
 /* aux functions*/

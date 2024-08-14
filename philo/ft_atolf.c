@@ -44,25 +44,27 @@ long	ft_atolf(char *s, int *flag)
 {
 	long long 	nbr;
 	int			sign;
-	size_t		i;
 
-	i = 0;
 	sign = 1;
 	*flag = 0;
-	while (ft_isspace(s[i]) == 1)
-		i++;
-	if (s[i] == '+' || s[i] == '-')
+	nbr = 0;
+	while (ft_isspace(*s) == 1)
+		s++;
+	if (*s == '+')
+		s++;
+	else if (*s == '-')
 	{
-		if (s[i] == '-')
-			sign *= -1;
-		i++;
+		sign = -1;
+		s++;
 	}
-	while (ft_isdigit(s[i]) == 1)
+	if (ft_isdigit(*s) == 0)
+		*flag = 1;
+	while (ft_isdigit(*s) == 1)
 	{
-		nbr = (nbr * 10) + (s[i] - '0');
-		if ((nbr * sign) < LONG_MIN || (sign == 1 && nbr > LONG_MAX))
+		nbr = (nbr * 10) + (*s - '0');
+		if ((nbr * sign) < INT_MIN || (sign == 1 && nbr > INT_MAX))
 			*flag = 1;
-		i++;
+		s++;
 	}
 	return (nbr * sign);
 }
