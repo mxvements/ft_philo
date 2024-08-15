@@ -11,6 +11,17 @@
  * 	time_to_sleep (ms)
  * 	number_of_imes_each_philosopher_must_eat (optional)
  */
+
+/**
+ * pthread_create
+ * 
+ * 
+ * pthread_join
+ * 
+ * pthread_lock
+ * 
+ * pthread_unlock
+ */
 int	main(int argc, char **argv)
 {
 	t_table	table;

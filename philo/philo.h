@@ -8,6 +8,7 @@
 # include <unistd.h>
 # include <sys/time.h>
 # include <pthread.h>
+# include <err.h>
 
 // Color: Foreground (text)
 # define BLACK "\x1B[30m"
@@ -42,6 +43,26 @@
 
 typedef pthread_mutex_t t_mtx;
 
+/**
+ * pthread_create
+ * pthread_detach
+ * pthread_join
+ * pthread_mutex_init
+ * pthread_mutex_destroy,
+ * pthread_mutex_lock
+ * pthread_mutex_unlock
+ */
+typedef enum e_pthread
+{
+	CREATE,
+	DETACH,
+	JOIN,
+	INIT,
+	DESTROY,
+	LOCK,
+	UNLOCK
+}	t_pthread;
+
 typedef struct s_fork
 {
 	t_mtx	fork;
@@ -50,36 +71,37 @@ typedef struct s_fork
 
 typedef struct s_philo
 {
-	int				id;
-	long			meals_count;
-	int				full; //(boolean)
-	long			last_meal_time; //time passed from last meal
-	struct s_fork	*left_fork;
-	struct s_fork	*right_fork;
-	pthread_t		thread_id; //a philo is a thread
-	struct s_table	*table;
+	int			id;
+	long		meals_count;
+	int			full; //(boolean)
+	long		last_meal_time; //time passed from last meal
+	t_philo		*left_fork;
+	t_philo		*right_fork;
+	pthread_t	thread_id; //a philo is a thread
+	t_table		*table;
 }	t_philo;
 
 typedef struct s_table
 {
-	long			philo_nbr;
-	long			time_to_die;
-	long			time_to_eat;
-	long			time_to_sleep;
-	long			meal_limit;
-	long			time_start;
-	int				end_flag; //  boolean, when a philo dies or all philos are full
-	struct s_fork	*forks;
-	struct s_philo	*philos;
-
+	long	philo_nbr;
+	long	time_to_die;
+	long	time_to_eat;
+	long	time_to_sleep;
+	long	meal_limit;
+	long	time_start;
+	int		end_flag; //boolean, when a philo dies or all philos are full
+	t_fork	*forks;
+	t_philo	*philos;
 }	t_table;
 
 
 /* init philo*/
-void	philo_exit(const char *error);
 int		init_table(t_table *table, char **argv);
+
+/*philo utils*/
 void	print_table(t_table *table);
-// int init_philo();
+void	philo_exit(const char *error);
+void	*safe_malloc(size_t bytes);
 
 /* aux functions*/
 long	ft_atolf(char *s, int *flag);
