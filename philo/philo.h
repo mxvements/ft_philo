@@ -8,7 +8,7 @@
 # include <unistd.h>
 # include <sys/time.h>
 # include <pthread.h>
-# include <err.h>
+# include <errno.h>
 
 // Color: Foreground (text)
 # define BLACK "\x1B[30m"
@@ -41,18 +41,21 @@
 # define BG_GRAY "\x1B[48;2;176;174;174m"
 # define BG_ROSE "\x1B[48;2;255;151;203m"
 
+/* --------------------------------------------------------------------------*/
 typedef pthread_mutex_t t_mtx;
 
-/**
- * pthread_create
- * pthread_detach
- * pthread_join
- * pthread_mutex_init
- * pthread_mutex_destroy,
- * pthread_mutex_lock
- * pthread_mutex_unlock
+/** Allowed functions:
+ * 	threads:
+ * 		pthread_create
+ * 		pthread_detach
+ * 		pthread_join
+ * 	mutex: 
+ * 		pthread_mutex_init
+ * 		pthread_mutex_destroy,
+ * 		pthread_mutex_lock
+ * 		pthread_mutex_unlock
  */
-typedef enum e_pthread
+typedef enum e_opthread
 {
 	CREATE,
 	DETACH,
@@ -61,7 +64,7 @@ typedef enum e_pthread
 	DESTROY,
 	LOCK,
 	UNLOCK
-}	t_pthread;
+}	t_opthread;
 
 typedef struct s_fork
 {
@@ -71,14 +74,14 @@ typedef struct s_fork
 
 typedef struct s_philo
 {
-	int			id;
-	long		meals_count;
-	int			full; //(boolean)
-	long		last_meal_time; //time passed from last meal
-	t_philo		*left_fork;
-	t_philo		*right_fork;
-	pthread_t	thread_id; //a philo is a thread
-	t_table		*table;
+	int				id;
+	long			meals_count;
+	int				full; //(boolean)
+	long			last_meal_time; //time passed from last meal
+	t_fork			*first_fork;
+	t_fork			*secnd_fork;
+	pthread_t		thread_id; //a philo is a thread
+	struct s_table	*table;
 }	t_philo;
 
 typedef struct s_table
@@ -90,18 +93,24 @@ typedef struct s_table
 	long	meal_limit;
 	long	time_start;
 	int		end_flag; //boolean, when a philo dies or all philos are full
-	t_fork	*forks;
-	t_philo	*philos;
+	t_fork	*forks; //array, ptr to first element
+	t_philo	*philos; //array, ptr to first element
 }	t_table;
 
+/* --------------------------------------------------------------------------*/
 
 /* init philo*/
-int		init_table(t_table *table, char **argv);
+int		table_init(t_table *table, char **argv);
 
-/*philo utils*/
-void	print_table(t_table *table);
+/* philo utils */
+void	table_print(t_table *table);
 void	philo_exit(const char *error);
 void	*safe_malloc(size_t bytes);
+
+/* pthread hanlders */
+void	safe_mutex_handle(t_mtx *mutex, t_opthread opthread);
+void	safe_thread_handle(pthread_t *thread, void *(*f)(void *), void *data,
+	t_opthread opthread);
 
 /* aux functions*/
 long	ft_atolf(char *s, int *flag);
