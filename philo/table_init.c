@@ -9,11 +9,11 @@
 static void	check_parse(int flag, long nbr)
 {
 	if (flag == 1)
-		philo_exit("Integer overflow or invalid number");
+		error_exit("Integer overflow or invalid number");
 	if (nbr < 0)
-		philo_exit("Negative number");
+		error_exit("Negative number");
 	if (nbr < 60)
-		philo_exit("Use timestamps larger than 60ms");
+		error_exit("Use timestamps larger than 60ms");
 }
 /**
  * input is given in milliseconds
@@ -80,7 +80,6 @@ static void	philos_init(t_table *table)
 		philo->is_full = 0;//false
 		philo->last_meal_time = 0;
 		philo->table = table;
-		philo->is_ready = 0; //false
 		//assigning forks
 		if (philo->id % 2)
 		{
@@ -98,10 +97,11 @@ static void	philos_init(t_table *table)
 int	table_init(t_table *table, char **argv)
 {	
 	parse_input(table, argv);
-	table->is_end = 0; //false
+	table->is_finished = 0; //false
 	table->philos = safe_malloc(table->philo_nbr * sizeof(t_philo)); //array of philos
 	table->forks = safe_malloc(table->philo_nbr * sizeof(t_fork)); //array of forks
-	safe_mutex_handle(&table->table_mtx, INIT);
+	safe_mutex_handle(&table->table_mtx, INIT); //thread to monitor table
+	safe_mutex_handle(&table->write_mtx, INIT);
 	forks_init(table);
 	philos_init(table);
 	return (0);

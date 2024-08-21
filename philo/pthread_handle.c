@@ -26,23 +26,23 @@
 static void	handle_pthread_error(int status)
 {
 	if (status == EAGAIN)
-		philo_exit("Resource temporarily unavailable");
+		error_exit("Resource temporarily unavailable");
 	else if (status == EINVAL)
-		philo_exit("Invalid argument");
+		error_exit("Invalid argument");
 	else if (status == EPERM)
-		philo_exit("Operation not permitted");
+		error_exit("Operation not permitted");
 	else if (status == ENOMEM)
-		philo_exit("Cannot allocate memory");
+		error_exit("Cannot allocate memory");
 	else if (status == ENOTRECOVERABLE)
-		philo_exit("State not recoverable");
+		error_exit("State not recoverable");
 	else if (status == EOWNERDEAD)
-		philo_exit("Owner died");
+		error_exit("Owner died");
 	else if (status == EDEADLK)
-		philo_exit("Resource deadlock avoided");
+		error_exit("Resource deadlock avoided");
 	else if (status == EBUSY)
-		philo_exit("Device or resource busy");
+		error_exit("Device or resource busy");
 	else if (status == ESRCH)
-		philo_exit("No such process");
+		error_exit("No such process");
 }
 
 /**
@@ -68,7 +68,7 @@ void	safe_mutex_handle(t_mtx *mutex, t_opthread opthr)
 	else if (opthr == UNLOCK)
 		handle_pthread_error(pthread_mutex_unlock(mutex));
 	else
-		philo_exit("Wrong opthread");
+		error_exit("Wrong opthread");
 }
 
 /**
@@ -92,5 +92,5 @@ void	safe_thread_handle(pthread_t *thr, void *(*f)(void *), void *data,
 	else if (opthr == DETACH)
 		handle_pthread_error(pthread_detach(*thr));
 	else
-		philo_exit("Wrong opthread");
+		error_exit("Wrong opthread");
 }

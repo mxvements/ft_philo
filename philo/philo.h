@@ -66,6 +66,23 @@ typedef enum e_opthread
 	UNLOCK
 }	t_opthread;
 
+typedef enum e_time
+{
+	SECOND,
+	MILLISECOND,
+	MICROSECOND
+}	t_time;
+
+typedef enum e_status
+{
+	EAT,
+	SLEEP,
+	THINK,
+	FRST_FORK,
+	SCND_FORK,
+	DIE
+}	t_status;
+
 typedef struct s_fork
 {
 	t_mtx	fork;
@@ -81,7 +98,6 @@ typedef struct s_philo
 	long			meals_count;
 	long			last_meal_time; //time passed from last meal
 	int				is_full; //(boolean)
-	int				is_ready; //are all philos ready
 	struct s_table	*table;
 }	t_philo;
 
@@ -93,24 +109,31 @@ typedef struct s_table
 	long	time_to_sleep;
 	long	meal_limit;
 	long	time_start;
-	int		is_end; //boolean, when a philo dies or all philos are full
+	int		is_finished; //boolean, when a philo dies or all philos are full
+	int		is_ready; //are all philos ready, to synchro philosophers
 	t_fork	*forks; //array, ptr to first element
 	t_philo	*philos; //array, ptr to first element
 	t_mtx	table_mtx;
+	t_mtx	write_mtx;
 }	t_table;
 
 /* --------------------------------------------------------------------------*/
 
-/* init philo*/
+/* init philo & dinner (simulation) */
 int		table_init(t_table *table, char **argv);
 void	philo_dinner(t_table *table);
 
-/* philo utils */
+/* table utils */
 void	table_print(t_table *table);
-void	philo_exit(const char *error);
+int		is_finished(t_table *table);
+void	error_exit(const char *error);
+long	get_time(t_time time_code);
+/* philo utils */
 void	*safe_malloc(size_t bytes);
 void	set_bool(t_mtx *mtx, int *dst, int value);
+int		get_bool(t_mtx *mtx, int *dst);
 void	set_long(t_mtx *mtx, long *dst, long value);
+long	get_long(t_mtx *mtx, int *dst);
 
 /* pthread hanlders */
 void	safe_mutex_handle(t_mtx *mutex, t_opthread opthread);

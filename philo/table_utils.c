@@ -1,5 +1,62 @@
 #include "philo.h"
 
+int	is_finished(t_table *table)
+{
+	return (get_bool(&table->table_mtx, &table->is_finished));
+}
+/**
+ * using gettimeofday
+ * t_time -> SECOND; MILLISECOND; MICROSECOND
+ * 
+ */
+long	get_time(t_time time_code)
+{
+	struct timeval	tv;
+	if (gettimeofday(&tv, NULL) != 0)
+		error_exit("Failure on gettimeofday");
+	if (time_code == SECOND)
+		return (tv.tv_sec + (tv.tv_usec / 1e6));
+	else if (time_code == MILLISECOND)
+		return ((tv.tv_sec * 1e3) + (tv.tv_usec / 1e3));
+	else if (time_code == MICROSECOND)
+		return ((tv.tv_sec * 1e6) + tv.tv_usec);
+	else
+		error_exit("Wrong time_code on get_time");
+	return (0);
+}
+
+void	error_exit(const char *error)
+{
+	printf(RED"%s\n"WHITE, error);
+	exit(EXIT_FAILURE);
+}
+/**
+ * only using usleep when reaching a thereshold
+ * usec (microseconds) < 1000
+ */
+void	precision_usleep(t_table *table, long usec)
+{
+	long	start;
+	long	elapsed;
+	long	remaining;
+
+	start = get_time(MICROSECOND);
+	while ((get_time(MICROSECOND) - start) < usec )
+	{
+		if (is_finished(table) == 1)
+			break ;
+		elapsed = get_time(MICROSECOND) - start;
+		remaining = usec - elapsed;
+		if (remaining < 1e3)
+			usleep(usec / 2);
+		else
+		{
+			while ((get_time(MICROSECOND) - start) < usec)
+				;
+		}
+	}
+}
+
 /** t_table struct:
  * 
  * long philo_nbr
@@ -27,9 +84,11 @@ void	table_print(t_table *table)
 		printf("table->meal_limit:\t%li\n", table->meal_limit);
 	if (table->time_start)
 		printf("table->time_start:v%li\n", table->time_start);
-	if (table->is_end)
-		printf("table->end_flag:\t%i\n", table->is_end);	
+	if (table->is_finished)
+		printf("table->end_flag:\t%i\n", table->is_finished);	
 }
+
+/* ------------------------------------------------------------------------- */
 
 static void forks_free(t_fork **fork)
 {
