@@ -27,8 +27,8 @@ void	table_print(t_table *table)
 		printf("table->meal_limit:\t%li\n", table->meal_limit);
 	if (table->time_start)
 		printf("table->time_start:v%li\n", table->time_start);
-	if (table->end_flag)
-		printf("table->end_flag:\t%i\n", table->end_flag);	
+	if (table->is_end)
+		printf("table->end_flag:\t%i\n", table->is_end);	
 }
 
 static void forks_free(t_fork **fork)

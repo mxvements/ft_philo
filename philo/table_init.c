@@ -77,9 +77,10 @@ static void	philos_init(t_table *table)
 		philo = table->philos + (i * sizeof(t_philo));
 		philo->id = i + 1;
 		philo->meals_count = 0;
-		philo->full = 0;//false
+		philo->is_full = 0;//false
 		philo->last_meal_time = 0;
 		philo->table = table;
+		philo->is_ready = 0; //false
 		//assigning forks
 		if (philo->id % 2)
 		{
@@ -97,9 +98,10 @@ static void	philos_init(t_table *table)
 int	table_init(t_table *table, char **argv)
 {	
 	parse_input(table, argv);
-	table->end_flag = 0; //false
+	table->is_end = 0; //false
 	table->philos = safe_malloc(table->philo_nbr * sizeof(t_philo)); //array of philos
 	table->forks = safe_malloc(table->philo_nbr * sizeof(t_fork)); //array of forks
+	safe_mutex_handle(&table->table_mtx, INIT);
 	forks_init(table);
 	philos_init(table);
 	return (0);

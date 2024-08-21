@@ -23,6 +23,7 @@ int	main(int argc, char **argv)
 	table_init(&table, argv);
 	table_print(&table);
 	//start dinner
+	philo_routine();
 	//clean (forks and philos from table)
 	return (0);
 }

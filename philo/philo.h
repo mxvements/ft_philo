@@ -75,12 +75,13 @@ typedef struct s_fork
 typedef struct s_philo
 {
 	int				id;
-	long			meals_count;
-	int				full; //(boolean)
-	long			last_meal_time; //time passed from last meal
+	pthread_t		id_thread; //a philo is a thread
 	t_fork			*first_fork;
 	t_fork			*secnd_fork;
-	pthread_t		thread_id; //a philo is a thread
+	long			meals_count;
+	long			last_meal_time; //time passed from last meal
+	int				is_full; //(boolean)
+	int				is_ready; //are all philos ready
 	struct s_table	*table;
 }	t_philo;
 
@@ -92,20 +93,24 @@ typedef struct s_table
 	long	time_to_sleep;
 	long	meal_limit;
 	long	time_start;
-	int		end_flag; //boolean, when a philo dies or all philos are full
+	int		is_end; //boolean, when a philo dies or all philos are full
 	t_fork	*forks; //array, ptr to first element
 	t_philo	*philos; //array, ptr to first element
+	t_mtx	table_mtx;
 }	t_table;
 
 /* --------------------------------------------------------------------------*/
 
 /* init philo*/
 int		table_init(t_table *table, char **argv);
+void	philo_dinner(t_table *table);
 
 /* philo utils */
 void	table_print(t_table *table);
 void	philo_exit(const char *error);
 void	*safe_malloc(size_t bytes);
+void	set_bool(t_mtx *mtx, int *dst, int value);
+void	set_long(t_mtx *mtx, long *dst, long value);
 
 /* pthread hanlders */
 void	safe_mutex_handle(t_mtx *mutex, t_opthread opthread);

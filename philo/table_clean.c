@@ -26,7 +26,7 @@ void	table_clean(t_table *table)
 	}
 	if (table->forks)
 	{
-		forks_free(table);
+		forks_free(table); //DUDAS
 		memset(table->forks, 0, sizeof(t_table) * table->philo_nbr); //clean mem space of the array
 		table->forks = NULL;
 	}
