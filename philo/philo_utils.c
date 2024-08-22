@@ -45,33 +45,29 @@ long	get_long(t_mtx *mtx, int *dst)
 	return (rslt);
 }
 
-void	write_status_debug(t_philo *philo, t_status status)
+static void	write_status_debug(t_philo *philo, t_status status, long elapsed)
 {
 	t_table	*table;
-	long	elapsed;
-
+	
 	table = philo->table;
-	elapsed = get_time(MILLISECOND);
-	if (philo->is_full == 1) //THREAD_SAFE?
-		return ;
-	safe_mutex_handle(&table->write_mtx, LOCK);
-
-	if ((status == FRST_FORK || status == SCND_FORK) && is_finished(table) == 0)
-		printf(YELLOW"%-6ld %d has taken a fork\n"RESET, elapsed, philo->id);
+	if (status == FRST_FORK && is_finished(table) == 0)
+		printf(YELLOW"%-6ld %d took 1st fork [%d]\n"RESET, elapsed,
+		philo->id, philo->first_fork->fork_id);
+	else if (status == SCND_FORK && is_finished(table) == 0)
+		printf(YELLOW"%-6ld %d took 2nd fork [%d]\n"RESET, elapsed,
+		philo->id, philo->secnd_fork->fork_id);
 	else if (status == EAT && is_finished(table) == 0)
-		printf(ORANGE"%-6ld %d is eating\n"RESET, elapsed, philo->id);
+		printf(ORANGE"%-6ld %d is eating [count: %ld]\n"RESET, elapsed,
+		philo->id, philo->meals_count);
 	else if (status == SLEEP && is_finished(table) == 0)
 		printf(CYAN"%-6ld %d is sleeping\n"RESET, elapsed, philo->id);
 	else if (status == THINK && is_finished(table) == 0)
 		printf(GREEN"%-6ld %d is thinking\n"RESET, elapsed, philo->id);
 	else if (status == DIE)
 		printf(RED"%-6ld %d is thinking\n"RESET, elapsed, philo->id);
-	
-	safe_mutex_handle(&table->write_mtx, UNLOCK);
-
 }
 
-void	write_status(t_philo *philo, t_status status)
+void	write_status(t_philo *philo, t_status status, int debug)
 {
 	t_table	*table;
 	long	elapsed;
@@ -81,17 +77,21 @@ void	write_status(t_philo *philo, t_status status)
 	if (philo->is_full == 1) //THREAD_SAFE?
 		return ;
 	safe_mutex_handle(&table->write_mtx, LOCK);
-
-	if ((status == FRST_FORK || status == SCND_FORK) && is_finished(table) == 0)
-		printf(YELLOW"%-6ld %d has taken a fork\n"RESET, elapsed, philo->id);
-	else if (status == EAT && is_finished(table) == 0)
-		printf(ORANGE"%-6ld %d is eating\n"RESET, elapsed, philo->id);
-	else if (status == SLEEP && is_finished(table) == 0)
-		printf(CYAN"%-6ld %d is sleeping\n"RESET, elapsed, philo->id);
-	else if (status == THINK && is_finished(table) == 0)
-		printf(GREEN"%-6ld %d is thinking\n"RESET, elapsed, philo->id);
-	else if (status == DIE)
-		printf(RED"%-6ld %d is thinking\n"RESET, elapsed, philo->id);
-	
+	if (debug)
+		write_status_debug(philo, status, elapsed);
+	else
+	{
+		if ((status == FRST_FORK || status == SCND_FORK)
+			&& is_finished(table) == 0)
+			printf(YELLOW"%-6ld %d took a fork\n"RESET, elapsed, philo->id);
+		else if (status == EAT && is_finished(table) == 0)
+			printf(ORANGE"%-6ld %d is eating\n"RESET, elapsed, philo->id);
+		else if (status == SLEEP && is_finished(table) == 0)
+			printf(CYAN"%-6ld %d is sleeping\n"RESET, elapsed, philo->id);
+		else if (status == THINK && is_finished(table) == 0)
+			printf(GREEN"%-6ld %d is thinking\n"RESET, elapsed, philo->id);
+		else if (status == DIE)
+			printf(RED"%-6ld %d is thinking\n"RESET, elapsed, philo->id);
+	}
 	safe_mutex_handle(&table->write_mtx, UNLOCK);
 }

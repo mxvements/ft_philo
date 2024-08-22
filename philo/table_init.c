@@ -80,7 +80,7 @@ static void	philos_init(t_table *table)
 		philo->is_full = 0;//false
 		philo->last_meal_time = 0;
 		philo->table = table;
-		//assigning forks
+		safe_mutex_handle(&philo->philo_mtx, INIT);
 		if (philo->id % 2)
 		{
 			philo->first_fork = &table->forks[(i + 1) % table->philo_nbr];
