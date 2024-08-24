@@ -57,6 +57,7 @@ void	*philo_routine(void *arg)
 
 	philo = (t_philo *)arg;
 	table = philo->table;
+	dprintf(STDOUT_FILENO, "\n[philo_routine] [philo_id] %d\n", philo->id);
 	philo_wait(philo->table);
 
 	//set last_meal_time

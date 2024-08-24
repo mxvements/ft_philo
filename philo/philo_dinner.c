@@ -21,8 +21,9 @@ static void single_philo(t_table *table)
 void	philo_dinner(t_table *table)
 {
 	int		i;
-	t_philo	philo;
+	t_philo	*philo;
 
+	dprintf(STDOUT_FILENO, "\n[dinner_start]\n");
 	if (table->meal_limit == 0)
 		return ;
 	if (table->philo_nbr == 1)
@@ -32,8 +33,9 @@ void	philo_dinner(t_table *table)
 	{
 		//create all the threads, when we crete the threads the routine starts
 		//we need to sinchronize all threads
-		philo = table->philos[i];
-		safe_thread_handle(&(philo.id_thread), philo_routine, NULL, CREATE);
+		philo = table->philos + (i * sizeof(t_philo));
+		dprintf(STDOUT_FILENO, "starts routine [philo_id] %d [create thread] ", philo->id);
+		safe_thread_handle(&(philo->id_thread), philo_routine, philo, CREATE);
 	}
 	//gettime of dinner start
 	table->time_start = get_time(MILLISECOND);
@@ -43,8 +45,8 @@ void	philo_dinner(t_table *table)
 	i = -1;
 	while (++i < table->philo_nbr)
 	{
-		philo = table->philos[i];
-		safe_thread_handle(&(philo.id_thread), NULL, NULL, JOIN);
+		philo = table->philos + (i * sizeof(t_philo));
+		safe_thread_handle(&(philo->id_thread), NULL, NULL, JOIN);
 	}
 	//if we manage to reach this point all philos are full
 

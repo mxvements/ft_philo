@@ -58,13 +58,13 @@ typedef pthread_mutex_t t_mtx;
  */
 typedef enum e_opthread
 {
-	CREATE,
-	DETACH,
-	JOIN,
-	INIT,
-	DESTROY,
-	LOCK,
-	UNLOCK
+	CREATE,		//0
+	DETACH,		//1
+	JOIN,		//2
+	INIT,		//3
+	DESTROY,	//4
+	LOCK,		//5
+	UNLOCK		//6
 }	t_opthread;
 
 typedef enum e_time

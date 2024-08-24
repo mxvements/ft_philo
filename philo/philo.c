@@ -21,7 +21,7 @@ int	main(int argc, char **argv)
 	//set table
 	memset((void *)&table, 0, sizeof(t_table)); //ft_bzero
 	table_init(&table, argv);
-	table_print(&table);
+	//table_print(&table);
 	//start dinner
 	philo_dinner(&table);
 	//clean (forks and philos from table)

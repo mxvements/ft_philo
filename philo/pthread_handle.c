@@ -41,8 +41,8 @@ static void	handle_pthread_error(int status)
 		error_exit("Resource deadlock avoided");
 	else if (status == EBUSY)
 		error_exit("Device or resource busy");
-	else if (status == ESRCH)
-		error_exit("No such process");
+	// else if (status == ESRCH)
+	// 	error_exit("No such process");
 }
 
 /**
@@ -59,6 +59,7 @@ static void	handle_pthread_error(int status)
  */
 void	safe_mutex_handle(t_mtx *mutex, t_opthread opthr)
 {
+	//dprintf(STDOUT_FILENO, "opthr: %d\n", opthr);
 	if (opthr == INIT)
 		handle_pthread_error(pthread_mutex_init(mutex, NULL));
 	else if (opthr == DESTROY)
@@ -85,6 +86,7 @@ void	safe_mutex_handle(t_mtx *mutex, t_opthread opthr)
 void	safe_thread_handle(pthread_t *thr, void *(*f)(void *), void *data,
 	t_opthread opthr)
 {
+	dprintf(STDOUT_FILENO, "opthr: %d\n", opthr);
 	if (opthr == CREATE)
 		handle_pthread_error(pthread_create(thr, NULL, f, data));
 	else if (opthr == JOIN)
