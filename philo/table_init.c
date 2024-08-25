@@ -27,8 +27,8 @@ static void	parse_input(t_table *table, char **argv)
 	int	flag;
 
 	flag = 0;
-	table->philo_nbr = ft_atolf(argv[1], &flag);
-	check_parse(flag, 0, table->philo_nbr);
+	table->philos_nbr = ft_atolf(argv[1], &flag);
+	check_parse(flag, 0, table->philos_nbr);
 	table->time_to_die = ft_atolf(argv[2], &flag);
 	check_parse(flag, 60, table->time_to_die);
 	table->time_to_die *= 1e3;
@@ -54,7 +54,7 @@ static void forks_init(t_table *table)
 
 	dprintf(STDOUT_FILENO, "\n[phorks_init]\n");
 	i = -1;
-	while (++i < table->philo_nbr)
+	while (++i < table->philos_nbr)
 	{
 		fork = table->forks + (i * sizeof(t_fork));
 		table->forks[i].fork_id = i;
@@ -75,7 +75,7 @@ static void	philos_init(t_table *table)
 
 	i = -1;
 	dprintf(STDOUT_FILENO, "\n[philos_init]\n");
-	while (++i < table->philo_nbr)
+	while (++i < table->philos_nbr)
 	{
 		philo = table->philos + (i * sizeof(t_philo));
 		philo->id = i + 1;
@@ -89,13 +89,13 @@ static void	philos_init(t_table *table)
 		
 		if (philo->id % 2)
 		{
-			philo->first_fork = &table->forks[(i + 1) % table->philo_nbr];
+			philo->first_fork = &table->forks[(i + 1) % table->philos_nbr];
 			philo->secnd_fork = &table->forks[i];
 		}
 		else
 		{
 			philo->first_fork = &table->forks[i];
-			philo->secnd_fork = &table->forks[(i + 1) % table->philo_nbr];
+			philo->secnd_fork = &table->forks[(i + 1) % table->philos_nbr];
 		}
 	}
 }
@@ -106,9 +106,10 @@ int	table_init(t_table *table, char **argv)
 	parse_input(table, argv);
 	table->is_finished = 0; //false
 	table->is_ready = 0; //false
-	table->philos = safe_malloc(table->philo_nbr * sizeof(t_philo)); //array of philos
-	table->forks = safe_malloc(table->philo_nbr * sizeof(t_fork)); //array of forks
-	
+	table->philos = safe_malloc(table->philos_nbr * sizeof(t_philo)); //array of philos
+	table->forks = safe_malloc(table->philos_nbr * sizeof(t_fork)); //array of forks
+	table->philos_running_nbr = 0;
+
 	dprintf(STDOUT_FILENO, "[mutex init, table_mtx]\t");
 	safe_mutex_handle(&table->table_mtx, INIT); //thread to monitor table
 	

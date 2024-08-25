@@ -35,6 +35,16 @@ void	set_long(t_mtx *mtx, long *dst, long value)
 	safe_mutex_handle(mtx, UNLOCK);
 }
 
+void	add_long(t_mtx *mtx, long *dst, long value_to_add)
+{
+	int	value;
+
+	safe_mutex_handle(mtx, LOCK);
+	value = *dst;
+	*dst = value + value_to_add;
+	safe_mutex_handle(mtx, UNLOCK);
+}
+
 long	get_long(t_mtx *mtx, int *dst)
 {
 	long	rslt;

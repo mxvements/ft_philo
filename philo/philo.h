@@ -105,18 +105,20 @@ typedef struct s_philo
 
 typedef struct s_table
 {
-	long	philo_nbr;
-	long	time_to_die;
-	long	time_to_eat;
-	long	time_to_sleep;
-	long	meal_limit;
-	long	time_start;
-	int		is_finished; //boolean, when a philo dies or all philos are full
-	int		is_ready; //are all philos ready, to synchro philosophers
-	t_fork	*forks; //array, ptr to first element
-	t_philo	*philos; //array, ptr to first element
-	t_mtx	table_mtx;
-	t_mtx	write_mtx;
+	long		philos_nbr;
+	long		time_to_die;
+	long		time_to_eat;
+	long		time_to_sleep;
+	long		meal_limit;
+	long		time_start;
+	int			is_finished; //boolean, when a philo dies or all philos are full
+	int			is_ready; //are all philos ready, to synchro philosophers
+	t_fork		*forks; //array, ptr to first element
+	t_philo		*philos; //array, ptr to first element
+	t_mtx		table_mtx;
+	t_mtx		write_mtx;
+	long		philos_running_nbr; //to monitor
+	pthread_t	monitor;
 }	t_table;
 
 /* --------------------------------------------------------------------------*/
@@ -138,6 +140,7 @@ void	*safe_malloc(size_t bytes);
 void	set_bool(t_mtx *mtx, int *dst, int value);
 int		get_bool(t_mtx *mtx, int *dst);
 void	set_long(t_mtx *mtx, long *dst, long value);
+void	add_long(t_mtx *mtx, long *dst, long value_to_add);
 long	get_long(t_mtx *mtx, int *dst);
 void	write_status(t_philo *philo, t_status status, int debug);
 
@@ -145,6 +148,9 @@ void	write_status(t_philo *philo, t_status status, int debug);
 void	safe_mutex_handle(t_mtx *mutex, t_opthread opthread);
 void	safe_thread_handle(pthread_t *thread, void *(*f)(void *), void *data,
 	t_opthread opthread);
+
+/* monitor */
+void	*philo_monitor(void *data);
 
 /* aux functions*/
 long	ft_atolf(char *s, int *flag);

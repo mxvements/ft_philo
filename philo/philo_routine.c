@@ -60,7 +60,8 @@ void	*philo_routine(void *arg)
 	dprintf(STDOUT_FILENO, "\n[philo_routine] [philo_id] %d\n", philo->id);
 	philo_wait(philo->table);
 
-	//set last_meal_time
+	//increase the philo_running nbr
+	add_long(&(table->table_mtx), &(table->philos_running_nbr), 1);
 	
 	while (is_finished(table) == 0)
 	{

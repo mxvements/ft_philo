@@ -72,8 +72,8 @@ void	precision_usleep(t_table *table, long usec)
 void	table_print(t_table *table)
 {
 	printf("[table]\n");
-	if (table->philo_nbr)
-		printf("table->philo_nbr:\t%li\n", table->philo_nbr);
+	if (table->philos_nbr)
+		printf("table->philo_nbr:\t%li\n", table->philos_nbr);
 	if (table->time_to_die)
 		printf("table->time_to_die:\t%li\n", table->time_to_die);
 	if (table->time_to_eat)

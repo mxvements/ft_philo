@@ -8,6 +8,7 @@ PHILO_FILES=	philo.c \
 				philo_utils.c \
 				philo_dinner.c \
 				philo_routine.c \
+				philo_monitor.c \
 				pthread_handle.c \
 				table_init.c \
 				table_clean.c \
