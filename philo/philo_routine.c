@@ -1,5 +1,10 @@
 #include "philo.h"
 
+static void set_last_meal_time(t_philo *philo)
+{
+	set_long(&philo->philo_mtx, &philo->t_last_meal, get_time(MILLISECOND));
+}
+
 static void philo_wait(t_table *table)
 {
 	while (get_bool(&table->table_mtx, &table->is_ready) == 0)
@@ -14,7 +19,7 @@ static void	philo_think(t_philo *philo)
 static void philo_sleep(t_philo *philo)
 {
 	write_status(philo, SLEEP, DEBUG);
-	precision_usleep(philo->table, philo->table->time_to_sleep);
+	precision_usleep(philo->table, philo->table->t_to_sleep);
 }
 
 /**
@@ -29,13 +34,14 @@ static void	philo_eat(t_philo *philo)
 	write_status(philo, FRST_FORK, DEBUG);
 	safe_mutex_handle(&philo->secnd_fork->fork, LOCK);
 	write_status(philo, SCND_FORK, DEBUG);
-	//eat, update last meal, update count
-	set_long(&philo->philo_mtx, &philo->last_meal_time, get_time(MILLISECOND));
+	//update last meal, update count, eat
+	set_last_meal_time(philo);
 	philo->meals_count++;
 	write_status(philo, EAT, DEBUG);
-	precision_usleep(philo->table, philo->table->time_to_eat);
+	precision_usleep(philo->table, philo->table->t_to_eat);
 	//is the philo full?, update if true
-	if (philo->table->meal_limit > 0 && philo->meals_count == philo->table->meal_limit)
+	if (philo->table->meal_limit > 0 
+		&& philo->meals_count == philo->table->meal_limit)
 		set_bool(&philo->philo_mtx, &philo->is_full, 1);
 	//release forks
 	safe_mutex_handle(&philo->first_fork->fork, UNLOCK);
@@ -57,12 +63,10 @@ void	*philo_routine(void *arg)
 
 	philo = (t_philo *)arg;
 	table = philo->table;
-	dprintf(STDOUT_FILENO, "\n[philo_routine] [philo_id] %d\n", philo->id);
-	philo_wait(philo->table);
-
-	//increase the philo_running nbr
+	//dprintf(STDOUT_FILENO, "\n[philo_routine] [philo_id] %d\n", philo->id);
+	philo_wait(philo->table); //synchronize all philos
+	set_last_meal_time(philo);
 	add_long(&(table->table_mtx), &(table->philos_running_nbr), 1);
-	
 	while (is_finished(table) == 0)
 	{
 		if (philo->is_full) //THREAD SAFE?
@@ -71,6 +75,5 @@ void	*philo_routine(void *arg)
 		philo_sleep(philo);
 		philo_think(philo);
 	}
-
 	return (NULL);
 }

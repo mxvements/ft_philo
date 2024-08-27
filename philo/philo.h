@@ -41,7 +41,7 @@
 # define BG_GRAY "\x1B[48;2;176;174;174m"
 # define BG_ROSE "\x1B[48;2;255;151;203m"
 
-# define DEBUG	0
+# define DEBUG	1
 /* --------------------------------------------------------------------------*/
 typedef pthread_mutex_t t_mtx;
 
@@ -97,7 +97,7 @@ typedef struct s_philo
 	t_fork			*first_fork;
 	t_fork			*secnd_fork;
 	long			meals_count;
-	long			last_meal_time; //time passed from last meal
+	long			t_last_meal; //time passed from last meal
 	int				is_full; //(boolean)
 	struct s_table	*table;
 	t_mtx			philo_mtx;
@@ -106,19 +106,19 @@ typedef struct s_philo
 typedef struct s_table
 {
 	long		philos_nbr;
-	long		time_to_die;
-	long		time_to_eat;
-	long		time_to_sleep;
+	long		philos_running_nbr; //to monitor
+	pthread_t	monitor;
+	long		t_start;
+	long		t_to_die;
+	long		t_to_eat;
+	long		t_to_sleep;
 	long		meal_limit;
-	long		time_start;
 	int			is_finished; //boolean, when a philo dies or all philos are full
 	int			is_ready; //are all philos ready, to synchro philosophers
 	t_fork		*forks; //array, ptr to first element
 	t_philo		*philos; //array, ptr to first element
 	t_mtx		table_mtx;
 	t_mtx		write_mtx;
-	long		philos_running_nbr; //to monitor
-	pthread_t	monitor;
 }	t_table;
 
 /* --------------------------------------------------------------------------*/
@@ -141,7 +141,7 @@ void	set_bool(t_mtx *mtx, int *dst, int value);
 int		get_bool(t_mtx *mtx, int *dst);
 void	set_long(t_mtx *mtx, long *dst, long value);
 void	add_long(t_mtx *mtx, long *dst, long value_to_add);
-long	get_long(t_mtx *mtx, int *dst);
+long	get_long(t_mtx *mtx, long *dst);
 void	write_status(t_philo *philo, t_status status, int debug);
 
 /* pthread hanlders */

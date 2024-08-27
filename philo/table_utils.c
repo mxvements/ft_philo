@@ -34,24 +34,24 @@ void	error_exit(const char *error)
  * only using usleep when reaching a thereshold
  * usec (microseconds) < 1000
  */
-void	precision_usleep(t_table *table, long usec)
+void	precision_usleep(t_table *table, long micro_s)
 {
 	long	start;
 	long	elapsed;
 	long	remaining;
 
 	start = get_time(MICROSECOND);
-	while ((get_time(MICROSECOND) - start) < usec )
+	while ((get_time(MICROSECOND) - start) < micro_s )
 	{
 		if (is_finished(table) == 1)
 			break ;
 		elapsed = get_time(MICROSECOND) - start;
-		remaining = usec - elapsed;
+		remaining = micro_s - elapsed;
 		if (remaining < 1e3)
-			usleep(usec / 2);
+			usleep(micro_s / 2);
 		else
 		{
-			while ((get_time(MICROSECOND) - start) < usec)
+			while ((get_time(MICROSECOND) - start) < micro_s)
 				;
 		}
 	}
@@ -74,16 +74,16 @@ void	table_print(t_table *table)
 	printf("[table]\n");
 	if (table->philos_nbr)
 		printf("table->philo_nbr:\t%li\n", table->philos_nbr);
-	if (table->time_to_die)
-		printf("table->time_to_die:\t%li\n", table->time_to_die);
-	if (table->time_to_eat)
-		printf("table->time_to_eat:\t%li\n", table->time_to_eat);
-	if (table->time_to_sleep)
-		printf("table->time_to_sleep:\t%li\n", table->time_to_sleep);
+	if (table->t_to_die)
+		printf("table->time_to_die:\t%li\n", table->t_to_die);
+	if (table->t_to_eat)
+		printf("table->time_to_eat:\t%li\n", table->t_to_eat);
+	if (table->t_to_sleep)
+		printf("table->time_to_sleep:\t%li\n", table->t_to_sleep);
 	if (table->meal_limit)
 		printf("table->meal_limit:\t%li\n", table->meal_limit);
-	if (table->time_start)
-		printf("table->time_start:v%li\n", table->time_start);
+	if (table->t_start)
+		printf("table->time_start:v%li\n", table->t_start);
 	if (table->is_finished)
 		printf("table->end_flag:\t%i\n", table->is_finished);	
 }

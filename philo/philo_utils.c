@@ -45,7 +45,7 @@ void	add_long(t_mtx *mtx, long *dst, long value_to_add)
 	safe_mutex_handle(mtx, UNLOCK);
 }
 
-long	get_long(t_mtx *mtx, int *dst)
+long	get_long(t_mtx *mtx, long *dst)
 {
 	long	rslt;
 
@@ -67,14 +67,14 @@ static void	write_status_debug(t_philo *philo, t_status status, long elapsed)
 		printf(YELLOW"%-6ld %d took 2nd fork [%d]\n"RESET, elapsed,
 		philo->id, philo->secnd_fork->fork_id);
 	else if (status == EAT && is_finished(table) == 0)
-		printf(ORANGE"%-6ld %d is eating [count: %ld]\n"RESET, elapsed,
+		printf(GREEN"%-6ld %d is eating [count: %ld]\n"RESET, elapsed,
 		philo->id, philo->meals_count);
 	else if (status == SLEEP && is_finished(table) == 0)
 		printf(CYAN"%-6ld %d is sleeping\n"RESET, elapsed, philo->id);
 	else if (status == THINK && is_finished(table) == 0)
-		printf(GREEN"%-6ld %d is thinking\n"RESET, elapsed, philo->id);
+		printf(GRAY"%-6ld %d is thinking\n"RESET, elapsed, philo->id);
 	else if (status == DIE)
-		printf(RED"%-6ld %d is thinking\n"RESET, elapsed, philo->id);
+		printf(RED"%-6ld %d has died\n"RESET, elapsed, philo->id);
 }
 
 void	write_status(t_philo *philo, t_status status, int debug)

@@ -24,20 +24,21 @@ static void	check_parse(int flag, int min_value, long nbr)
 */
 static void	parse_input(t_table *table, char **argv)
 {
-	int	flag;
+	int			flag;
+	const int	t_min = 0;
 
 	flag = 0;
 	table->philos_nbr = ft_atolf(argv[1], &flag);
 	check_parse(flag, 0, table->philos_nbr);
-	table->time_to_die = ft_atolf(argv[2], &flag);
-	check_parse(flag, 60, table->time_to_die);
-	table->time_to_die *= 1e3;
-	table->time_to_eat = ft_atolf(argv[3], &flag);
-	check_parse(flag, 60, table->time_to_eat);
-	table->time_to_eat *= 1e3;
-	table->time_to_sleep = ft_atolf(argv[4], &flag);
-	check_parse(flag, 60, table->time_to_sleep);
-	table->time_to_sleep *= 1e3;
+	table->t_to_die = ft_atolf(argv[2], &flag);
+	check_parse(flag, t_min, table->t_to_die);
+	table->t_to_die *= 1e3; //convert millisecond to microsecond
+	table->t_to_eat = ft_atolf(argv[3], &flag);
+	check_parse(flag, t_min, table->t_to_eat);
+	table->t_to_eat *= 1e3;
+	table->t_to_sleep = ft_atolf(argv[4], &flag);
+	check_parse(flag, t_min, table->t_to_sleep);
+	table->t_to_sleep *= 1e3;
 	if (argv[5])
 	{
 		table->meal_limit = ft_atolf(argv[5], &flag);
@@ -52,14 +53,14 @@ static void forks_init(t_table *table)
 	int	i;
 	t_fork *fork;
 
-	dprintf(STDOUT_FILENO, "\n[phorks_init]\n");
+	//dprintf(STDOUT_FILENO, "\n[phorks_init]\n");
 	i = -1;
 	while (++i < table->philos_nbr)
 	{
 		fork = table->forks + (i * sizeof(t_fork));
 		table->forks[i].fork_id = i;
 
-		dprintf(STDOUT_FILENO, "[fork_id] %d [mutex init, fork] ", table->forks[i].fork_id);
+		//dprintf(STDOUT_FILENO, "[fork_id] %d [mutex init, fork] ", table->forks[i].fork_id);
 		safe_mutex_handle(&fork->fork, INIT);
 	}
 }
@@ -74,17 +75,17 @@ static void	philos_init(t_table *table)
 	t_philo *philo;
 
 	i = -1;
-	dprintf(STDOUT_FILENO, "\n[philos_init]\n");
+	//dprintf(STDOUT_FILENO, "\n[philos_init]\n");
 	while (++i < table->philos_nbr)
 	{
 		philo = table->philos + (i * sizeof(t_philo));
 		philo->id = i + 1;
 		philo->meals_count = 0;
 		philo->is_full = 0;//false
-		philo->last_meal_time = 0;
+		philo->t_last_meal = 0;
 		philo->table = table;
 
-		dprintf(STDOUT_FILENO, "[philo_id] %d [mutex init, philo_mtx] ", philo->id);
+		//dprintf(STDOUT_FILENO, "[philo_id] %d [mutex init, philo_mtx] ", philo->id);
 		safe_mutex_handle(&philo->philo_mtx, INIT);
 		
 		if (philo->id % 2)
@@ -102,7 +103,7 @@ static void	philos_init(t_table *table)
 
 int	table_init(t_table *table, char **argv)
 {	
-	dprintf(STDOUT_FILENO, "\n[table_init]\n");
+	//dprintf(STDOUT_FILENO, "\n[table_init]\n");
 	parse_input(table, argv);
 	table->is_finished = 0; //false
 	table->is_ready = 0; //false
@@ -110,10 +111,10 @@ int	table_init(t_table *table, char **argv)
 	table->forks = safe_malloc(table->philos_nbr * sizeof(t_fork)); //array of forks
 	table->philos_running_nbr = 0;
 
-	dprintf(STDOUT_FILENO, "[mutex init, table_mtx]\t");
+	//dprintf(STDOUT_FILENO, "[mutex init, table_mtx]\t");
 	safe_mutex_handle(&table->table_mtx, INIT); //thread to monitor table
 	
-	dprintf(STDOUT_FILENO, "[mutex init, write_mtx]\t");
+	//dprintf(STDOUT_FILENO, "[mutex init, write_mtx]\t");
 	safe_mutex_handle(&table->write_mtx, INIT);
 	
 	forks_init(table);
