@@ -43,7 +43,8 @@ void	*philo_monitor(void *data)
 	while (is_finished(table) == 0)
 	{
 		i = -1;
-		while (++i < table->philos_nbr && table->is_finished == 0)
+		while (++i < table->philos_nbr
+			&& get_bool(&table->table_mtx, &table->is_finished) == 0)
 		{
 			philo = table->philos + (i * sizeof(t_philo));
 			if (philo_died(philo) == 1)

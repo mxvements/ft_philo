@@ -1,11 +1,57 @@
 #include "philo.h"
 
-static void single_philo(t_table *table)
-{
-	(void)table;
-	return ;//TODO
-}
+// static void single_philo_routine(t_table *table)
+// {
+// 	t_philo	philo;
 
+// 	philo = table->philos[0];
+// 	philo_wait(table->philos);
+// 	set_last_meal_time(&philo);
+// 	add_long(&(table->table_mtx), &(table->philos_running_nbr), 1);
+// 	while (is_finished(table) == 0)
+// 	{
+// 		if (philo.is_full)
+// 			return (NULL);
+// 		philo_eat(&philo);
+// 		philo
+// 	}
+// 	return ;
+// }
+
+/**
+ * If the philo_nbr is even
+ */
+
+/**
+ * we need to
+ * - wait all philos (sinchronization)
+ * - endlees loop:
+ * 	- check time to die
+ * 	- time to eat
+ * 	- time to sleep
+*/
+static void	*philo_routine(void *arg)
+{
+	t_philo	*philo;
+	t_table	*table;
+
+	philo = (t_philo *)arg;
+	table = philo->table;
+	//dprintf(STDOUT_FILENO, "\n[philo_routine] [philo_id] %d\n", philo->id);
+	philo_wait(philo->table); //synchronize all philos
+	//we need to de-syncronize the
+	set_last_meal_time(philo);
+	add_long(&(table->table_mtx), &(table->philos_running_nbr), 1);
+	while (is_finished(table) == 0)
+	{
+		if (philo->is_full) //THREAD SAFE?
+			return (NULL);
+		philo_eat(philo);
+		philo_sleep(philo);
+		philo_think(philo);
+	}
+	return (NULL);
+}
 
 /**
  * use example
@@ -27,8 +73,8 @@ void	philo_dinner(t_table *table)
 	//dprintf(STDOUT_FILENO, "\n[dinner_start]\n");
 	if (table->meal_limit == 0)
 		return ;
-	if (table->philos_nbr == 1)
-		return (single_philo(table));
+	// if (table->philos_nbr == 1)
+	// 	return (single_philo_routine(table));
 	i = -1;
 	while (++i < table->philos_nbr)
 	{
@@ -50,5 +96,6 @@ void	philo_dinner(t_table *table)
 		safe_thread_handle(&(philo->id_thread), NULL, NULL, JOIN);
 	}
 	//if we manage to reach this point all philos are full
-
+	set_bool(&table->table_mtx, &table->is_finished, 1); //DATARACE
+	safe_thread_handle(&table->monitor, NULL, NULL, JOIN);
 }

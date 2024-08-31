@@ -76,14 +76,16 @@ static void	write_status_debug(t_philo *philo, t_status status, long elapsed)
 	else if (status == DIE)
 		printf(RED"%-6ld %d has died\n"RESET, elapsed, philo->id);
 }
-
+/**
+ * [time_millisec] [philo_id] [action]
+ */
 void	write_status(t_philo *philo, t_status status, int debug)
 {
 	t_table	*table;
 	long	elapsed;
 
 	table = philo->table;
-	elapsed = get_time(MILLISECOND);
+	elapsed = get_time(MILLISECOND) - ((t_table*)philo->table)->t_start;
 	if (philo->is_full == 1) //THREAD_SAFE?
 		return ;
 	safe_mutex_handle(&table->write_mtx, LOCK);
@@ -101,7 +103,7 @@ void	write_status(t_philo *philo, t_status status, int debug)
 		else if (status == THINK && is_finished(table) == 0)
 			printf(GREEN"%-6ld %d is thinking\n"RESET, elapsed, philo->id);
 		else if (status == DIE)
-			printf(RED"%-6ld %d is thinking\n"RESET, elapsed, philo->id);
+			printf(RED"%-6ld %d has died\n"RESET, elapsed, philo->id);
 	}
 	safe_mutex_handle(&table->write_mtx, UNLOCK);
 }

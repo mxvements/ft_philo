@@ -41,7 +41,7 @@
 # define BG_GRAY "\x1B[48;2;176;174;174m"
 # define BG_ROSE "\x1B[48;2;255;151;203m"
 
-# define DEBUG	1
+# define DEBUG	0
 /* --------------------------------------------------------------------------*/
 typedef pthread_mutex_t t_mtx;
 
@@ -126,7 +126,7 @@ typedef struct s_table
 /* init philo & dinner (simulation) */
 int		table_init(t_table *table, char **argv);
 void	philo_dinner(t_table *table);
-void	*philo_routine(void *arg);
+// void	*philo_routine(void *arg);
 
 /* table utils */
 void	table_print(t_table *table);
@@ -143,6 +143,13 @@ void	set_long(t_mtx *mtx, long *dst, long value);
 void	add_long(t_mtx *mtx, long *dst, long value_to_add);
 long	get_long(t_mtx *mtx, long *dst);
 void	write_status(t_philo *philo, t_status status, int debug);
+
+/** routine */
+void	set_last_meal_time(t_philo *philo);
+void	philo_wait(t_table *table);
+void	philo_think(t_philo *philo);
+void	philo_sleep(t_philo *philo);
+void	philo_eat(t_philo *philo);
 
 /* pthread hanlders */
 void	safe_mutex_handle(t_mtx *mutex, t_opthread opthread);

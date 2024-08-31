@@ -1,22 +1,22 @@
 #include "philo.h"
 
-static void set_last_meal_time(t_philo *philo)
+void	set_last_meal_time(t_philo *philo)
 {
 	set_long(&philo->philo_mtx, &philo->t_last_meal, get_time(MILLISECOND));
 }
 
-static void philo_wait(t_table *table)
+void	philo_wait(t_table *table)
 {
 	while (get_bool(&table->table_mtx, &table->is_ready) == 0)
 		;
 }
-//TODO
-static void	philo_think(t_philo *philo)
+
+void	philo_think(t_philo *philo)
 {
 	write_status(philo, THINK, DEBUG);
 }
 
-static void philo_sleep(t_philo *philo)
+void	philo_sleep(t_philo *philo)
 {
 	write_status(philo, SLEEP, DEBUG);
 	precision_usleep(philo->table, philo->table->t_to_sleep);
@@ -27,13 +27,16 @@ static void philo_sleep(t_philo *philo)
  * eat, write eat update last maeal, update last meal counter
  * release the forks
  */
-static void	philo_eat(t_philo *philo)
+void	philo_eat(t_philo *philo)
 {
 	//grab forks
 	safe_mutex_handle(&philo->first_fork->fork, LOCK);
 	write_status(philo, FRST_FORK, DEBUG);
 	safe_mutex_handle(&philo->secnd_fork->fork, LOCK);
 	write_status(philo, SCND_FORK, DEBUG);
+	
+	//TODO: si los dos no están lockeados...
+
 	//update last meal, update count, eat
 	set_last_meal_time(philo);
 	philo->meals_count++;
@@ -46,34 +49,4 @@ static void	philo_eat(t_philo *philo)
 	//release forks
 	safe_mutex_handle(&philo->first_fork->fork, UNLOCK);
 	safe_mutex_handle(&philo->secnd_fork->fork, UNLOCK);
-}
-
-/**
- * we need to
- * - wait all philos (sinchronization)
- * - endlees loop:
- * 	- check time to die
- * 	- time to eat
- * 	- time to sleep
-*/
-void	*philo_routine(void *arg)
-{
-	t_philo	*philo;
-	t_table	*table;
-
-	philo = (t_philo *)arg;
-	table = philo->table;
-	//dprintf(STDOUT_FILENO, "\n[philo_routine] [philo_id] %d\n", philo->id);
-	philo_wait(philo->table); //synchronize all philos
-	set_last_meal_time(philo);
-	add_long(&(table->table_mtx), &(table->philos_running_nbr), 1);
-	while (is_finished(table) == 0)
-	{
-		if (philo->is_full) //THREAD SAFE?
-			return (NULL);
-		philo_eat(philo);
-		philo_sleep(philo);
-		philo_think(philo);
-	}
-	return (NULL);
 }

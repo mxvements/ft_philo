@@ -12,6 +12,7 @@ int	is_finished(t_table *table)
 long	get_time(t_time time_code)
 {
 	struct timeval	tv;
+
 	if (gettimeofday(&tv, NULL) != 0)
 		error_exit("Failure on gettimeofday");
 	if (time_code == SECOND)
@@ -47,8 +48,8 @@ void	precision_usleep(t_table *table, long micro_s)
 			break ;
 		elapsed = get_time(MICROSECOND) - start;
 		remaining = micro_s - elapsed;
-		if (remaining < 1e3)
-			usleep(micro_s / 2);
+		if (remaining > 1e3)
+			usleep(remaining / 2);
 		else
 		{
 			while ((get_time(MICROSECOND) - start) < micro_s)
@@ -110,6 +111,10 @@ static void forks_free(t_fork **fork)
  */
 void	table_free(t_table *table)
 {
+	/* WE NEED TO DESTOY ALL PHILOS MUTEX
+		AND THE TABLE MUTEXes
+		and then free the mallocs
+	*/
 	if (table->forks)
 		forks_free(&(table->forks)); //those are the mutex
 	// if (table->philos)
