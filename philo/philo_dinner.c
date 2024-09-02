@@ -65,7 +65,7 @@ static void	*philo_routine(void *arg)
  * 		- Syncronize the beginning of the simulation
  * 		- Join everyone
 */
-void	philo_dinner(t_table *table)
+int	philo_dinner(t_table *table)
 {
 	int		i;
 	t_philo	*philo;
@@ -80,12 +80,16 @@ void	philo_dinner(t_table *table)
 	{
 		philo = table->philos + (i * sizeof(t_philo));
 		//dprintf(STDOUT_FILENO, "starts routine [philo_id] %d [create thread] ", philo->id);
-		safe_thread_handle(&(philo->id_thread), philo_routine, philo, CREATE);
+		if (safe_thread_handle(&(philo->id_thread), philo_routine, philo, CREATE) < 0)
+			return (-1); //error -> might need to clean threads
 	}
 	//monitor philo's threadds
-	safe_thread_handle(&(table->monitor), philo_monitor, table, CREATE);
-	//gettime of dinner start
+	if (safe_thread_handle(&(table->monitor), philo_monitor, table, CREATE) < 0)
+		return (-1);
+ 	//gettime of dinner start
 	table->t_start = get_time(MILLISECOND);
+	if (table->t_start < 0)
+		return (-1);
 	//now all threads are aready, after all are created
 	set_bool(&table->table_mtx, &table->is_ready, 1);
 	//join
@@ -93,9 +97,13 @@ void	philo_dinner(t_table *table)
 	while (++i < table->philos_nbr)
 	{
 		philo = table->philos + (i * sizeof(t_philo));
-		safe_thread_handle(&(philo->id_thread), NULL, NULL, JOIN);
+		if (safe_thread_handle(&(philo->id_thread), NULL, NULL, JOIN) < 0)
+			return (-1);
 	}
 	//if we manage to reach this point all philos are full
 	set_bool(&table->table_mtx, &table->is_finished, 1); //DATARACE
-	safe_thread_handle(&table->monitor, NULL, NULL, JOIN);
+	if (safe_thread_handle(&table->monitor, NULL, NULL, JOIN) < 0)
+		return (-1);
+
+	return (0);
 }

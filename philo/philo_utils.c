@@ -1,13 +1,17 @@
 
 #include "philo.h"
 
+
 void	*safe_malloc(size_t bytes)
 {
 	void	*rslt;
 
 	rslt = malloc(bytes);
 	if (!rslt)
-		error_exit("Malloc error");
+	{
+		error_print("Malloc error");
+		return (NULL);
+	}
 	return (rslt);
 }
 

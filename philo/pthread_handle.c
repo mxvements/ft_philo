@@ -23,26 +23,27 @@
  * pthread_unlock;
  * 	EAGAIN, EINVAL, EPERM, ENOTRECOVERABLE, EOWNERDEAD, EDEADLK, EBUSY,
  */
-static void	handle_pthread_error(int status)
+static int	handle_pthread_error(int status)
 {
 	if (status == EAGAIN)
-		error_exit("Resource temporarily unavailable");
+		return (error_print("Resource temporarily unavailable"));
 	else if (status == EINVAL)
-		error_exit("Invalid argument");
+		return (error_print("Invalid argument"));
 	else if (status == EPERM)
-		error_exit("Operation not permitted");
+		return (error_print("Operation not permitted"));
 	else if (status == ENOMEM)
-		error_exit("Cannot allocate memory");
+		return (error_print("Cannot allocate memory"));
 	else if (status == ENOTRECOVERABLE)
-		error_exit("State not recoverable");
+		return (error_print("State not recoverable"));
 	else if (status == EOWNERDEAD)
-		error_exit("Owner died");
+		return (error_print("Owner died"));
 	else if (status == EDEADLK)
-		error_exit("Resource deadlock avoided");
+		return (error_print("Resource deadlock avoided"));
 	else if (status == EBUSY)
-		error_exit("Device or resource busy");
+		return (error_print("Device or resource busy"));
 	// else if (status == ESRCH)
 	// 	error_exit("No such process");
+	return (0);
 }
 
 /**
@@ -56,20 +57,23 @@ static void	handle_pthread_error(int status)
  * 	(pthread_mutex_t *mutex)
  * pthread_mutex_unlock
  * 	(pthread_mutex_t *mutex)
+ * 
+ * return
+ * 0 in case of sucess, status code of error in case of error
  */
-void	safe_mutex_handle(t_mtx *mutex, t_opthread opthr)
+int	safe_mutex_handle(t_mtx *mutex, t_opthread opthr)
 {
 	//dprintf(STDOUT_FILENO, "opthr: %d\n", opthr);
 	if (opthr == INIT)
-		handle_pthread_error(pthread_mutex_init(mutex, NULL));
+		return (handle_pthread_error(pthread_mutex_init(mutex, NULL)));
 	else if (opthr == DESTROY)
-		handle_pthread_error(pthread_mutex_destroy(mutex));
+		return (handle_pthread_error(pthread_mutex_destroy(mutex)));
 	else if (opthr == LOCK)
-		handle_pthread_error(pthread_mutex_lock(mutex));
+		return (handle_pthread_error(pthread_mutex_lock(mutex)));
 	else if (opthr == UNLOCK)
-		handle_pthread_error(pthread_mutex_unlock(mutex));
+		return (handle_pthread_error(pthread_mutex_unlock(mutex)));
 	else
-		error_exit("Wrong opthread");
+		return (error_print("Wrong opthread"));
 }
 
 /**
@@ -82,17 +86,20 @@ void	safe_mutex_handle(t_mtx *mutex, t_opthread opthr)
  * 	(pthread_t thread, void **retval)
  * pthread_detach
  * 	(pthread_t thread)
+ * 
+ * return
+ * 0 in case of succes, status code of error in case of error
  */
-void	safe_thread_handle(pthread_t *thr, void *(*f)(void *), void *data,
+int	safe_thread_handle(pthread_t *thr, void *(*f)(void *), void *data,
 	t_opthread opthr)
 {
 	//dprintf(STDOUT_FILENO, "opthr: %d\n", opthr);
 	if (opthr == CREATE)
-		handle_pthread_error(pthread_create(thr, NULL, f, data));
+		return (handle_pthread_error(pthread_create(thr, NULL, f, data)));
 	else if (opthr == JOIN)
-		handle_pthread_error(pthread_join(*thr, NULL));
+		return (handle_pthread_error(pthread_join(*thr, NULL)));
 	else if (opthr == DETACH)
-		handle_pthread_error(pthread_detach(*thr));
+		return (handle_pthread_error(pthread_detach(*thr)));
 	else
-		error_exit("Wrong opthread");
+		return (error_print("Wrong opthread"));
 }

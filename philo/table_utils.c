@@ -14,7 +14,7 @@ long	get_time(t_time time_code)
 	struct timeval	tv;
 
 	if (gettimeofday(&tv, NULL) != 0)
-		error_exit("Failure on gettimeofday");
+		return (error_print("Failure on gettimeofday"));
 	if (time_code == SECOND)
 		return (tv.tv_sec + (tv.tv_usec / 1e6));
 	else if (time_code == MILLISECOND)
@@ -22,10 +22,17 @@ long	get_time(t_time time_code)
 	else if (time_code == MICROSECOND)
 		return ((tv.tv_sec * 1e6) + tv.tv_usec);
 	else
-		error_exit("Wrong time_code on get_time");
+		return (error_print("Wrong time_code on get_time"));
 	return (0);
 }
 
+int	error_print(const char *error)
+{
+	printf(RED"%s\n"WHITE, error);
+	return (-1);
+}
+
+/* exit not allowed*/
 void	error_exit(const char *error)
 {
 	printf(RED"%s\n"WHITE, error);

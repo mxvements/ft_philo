@@ -125,13 +125,14 @@ typedef struct s_table
 
 /* init philo & dinner (simulation) */
 int		table_init(t_table *table, char **argv);
-void	philo_dinner(t_table *table);
+int		philo_dinner(t_table *table);
 // void	*philo_routine(void *arg);
 
 /* table utils */
 void	table_print(t_table *table);
 int		is_finished(t_table *table);
-void	error_exit(const char *error);
+int		error_print(const char *error);
+void	error_exit(const char *error); //NOT ALLOWED
 long	get_time(t_time time_code);
 void	precision_usleep(t_table *table, long usec);
 
@@ -152,8 +153,8 @@ void	philo_sleep(t_philo *philo);
 void	philo_eat(t_philo *philo);
 
 /* pthread hanlders */
-void	safe_mutex_handle(t_mtx *mutex, t_opthread opthread);
-void	safe_thread_handle(pthread_t *thread, void *(*f)(void *), void *data,
+int		safe_mutex_handle(t_mtx *mutex, t_opthread opthread);
+int		safe_thread_handle(pthread_t *thread, void *(*f)(void *), void *data,
 	t_opthread opthread);
 
 /* monitor */

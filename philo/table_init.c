@@ -1,20 +1,23 @@
 #include "philo.h"
 
-/**
- * flag -> checks ft_atolf (int overflow)
- * since we're working with time, no negatives are allowed
- * 
- * TODO: [video] time_to_die, time_to_eat and time_to_sleep should be < 60ms
- */
-static void	check_parse(int flag, int min_value, long nbr)
+/* PARSE FUNCTS*/
+
+static int convert_parse(long *data, char **argv, int argidx)
 {
+	int			flag;
+	const int	t_min = 0;
+
+	flag = 0;
+	*data = ft_atolf(argv[argidx], &flag);
 	if (flag == 1)
-		error_exit("Integer overflow or invalid number");
-	if (nbr < 0)
-		error_exit("Negative number");
-	if (nbr < min_value)
-		error_exit("Use timestamps larger than 60ms");
+		return (error_print("Integer overflow or invalid number"));
+	if (*data < 0)
+		return (error_print("Negative number"));
+	if (*data < t_min)
+		return (error_print("Use timestamps larger than 60ms"));
+	return (0);
 }
+
 /**
  * input is given in milliseconds
  * usleep works with microseconds
@@ -22,30 +25,27 @@ static void	check_parse(int flag, int min_value, long nbr)
  * micro < milli
  * 1 microseconds = 0.001 milliseconds
 */
-static void	parse_input(t_table *table, char **argv)
+static int	parse_input(t_table *table, char **argv)
 {
-	int			flag;
-	const int	t_min = 0;
-
-	flag = 0;
-	table->philos_nbr = ft_atolf(argv[1], &flag);
-	check_parse(flag, 0, table->philos_nbr);
-	table->t_to_die = ft_atolf(argv[2], &flag);
-	check_parse(flag, t_min, table->t_to_die);
+	if (convert_parse(&(table->philos_nbr), argv, 1) < 0)
+		return (-1);
+	if (convert_parse(&(table->t_to_die), argv, 2) < 0)
+		return (-1);
 	table->t_to_die *= 1e3; //convert millisecond to microsecond
-	table->t_to_eat = ft_atolf(argv[3], &flag);
-	check_parse(flag, t_min, table->t_to_eat);
+	if (convert_parse(&(table->t_to_eat), argv, 3) < 0)
+		return (-1);
 	table->t_to_eat *= 1e3;
-	table->t_to_sleep = ft_atolf(argv[4], &flag);
-	check_parse(flag, t_min, table->t_to_sleep);
+	if (convert_parse(&(table->t_to_sleep), argv, 4) < 0)
+		return (-1);
 	table->t_to_sleep *= 1e3;
 	if (argv[5])
-	{
-		table->meal_limit = ft_atolf(argv[5], &flag);
-		check_parse(flag, 0, table->meal_limit);
+	{	
+		if (convert_parse(&(table->meal_limit), argv, 5) < 0)
+			return (-1);
 	}
 	else
 		table->meal_limit = -1;
+	return (0);
 }
 
 static void forks_init(t_table *table)
@@ -104,16 +104,21 @@ static void	philos_init(t_table *table)
 int	table_init(t_table *table, char **argv)
 {	
 	//dprintf(STDOUT_FILENO, "\n[table_init]\n");
-	parse_input(table, argv);
+	if (parse_input(table, argv) < 0)
+		return (-1);
 	table->is_finished = 0; //false
 	table->is_ready = 0; //false
 	table->philos = safe_malloc(table->philos_nbr * sizeof(t_philo)); //array of philos
+	if (!table->philos)
+		return (-1);
 	table->forks = safe_malloc(table->philos_nbr * sizeof(t_fork)); //array of forks
+	if (!table->forks)
+		return (-1);
 	table->philos_running_nbr = 0;
 
 	//dprintf(STDOUT_FILENO, "[mutex init, table_mtx]\t");
 	safe_mutex_handle(&table->table_mtx, INIT); //thread to monitor table
-	
+
 	//dprintf(STDOUT_FILENO, "[mutex init, write_mtx]\t");
 	safe_mutex_handle(&table->write_mtx, INIT);
 	

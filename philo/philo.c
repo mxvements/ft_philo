@@ -1,6 +1,9 @@
 #include "philo.h"
 
 /**
+ * error_exit
+ */
+/**
  * 	use example
  *  ./philo 5 800 200 200 [5]
  * 
@@ -20,7 +23,8 @@ int	main(int argc, char **argv)
 		\nExample: ./philo 5 800 200 200 (5)");
 	//set table
 	memset((void *)&table, 0, sizeof(t_table)); //ft_bzero
-	table_init(&table, argv);
+	if (table_init(&table, argv) < 0)
+		return (1);
 	//table_print(&table);
 	//start dinner
 	philo_dinner(&table);

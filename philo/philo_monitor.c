@@ -30,6 +30,7 @@ static int philo_died(t_philo *philo)
 	return (0);
 }
 
+/* ESTAS AQUI, como gestionas el error de are_all_philos_running con un -1*/
 void	*philo_monitor(void *data)
 {
 	t_table *table;
