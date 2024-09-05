@@ -7,21 +7,23 @@
  * possible return error codes:
  * (https://www.gnu.org/software/libc/manual/html_node/Error-Codes.html)
  *
- * pthread_create:
- * 	EAGAIN, EINVAL, EPERM
- * pthread_join;
- * 	EDEADLK, EINVAL,ESRCH
- * pthread_detach;
- * 	EINVAL, ESRCH
+ * 		pthread_create:
+ * 			EAGAIN, EINVAL, EPERM
+ *		pthread_join;
+ * 			EDEADLK, EINVAL,ESRCH
+ * 		pthread_detach;
+ * 			EINVAL, ESRCH
  * 
- * pthread_init;
- * 	EAGAIN, EINVAL, ENOMEM, EPERM
- * pthread_destroy;
- * 	EAGAIN, EINVAL, ENOMEM, EPERM
- * pthread_lock;
- * 	EAGAIN, EINVAL, EPERM, ENOTRECOVERABLE, EOWNERDEAD, EDEADLK, EBUSY,
- * pthread_unlock;
- * 	EAGAIN, EINVAL, EPERM, ENOTRECOVERABLE, EOWNERDEAD, EDEADLK, EBUSY,
+ * 		pthread_init;
+ * 			EAGAIN, EINVAL, ENOMEM, EPERM
+ * 		pthread_destroy;
+ * 			EAGAIN, EINVAL, ENOMEM, EPERM
+ * 		pthread_lock;
+ * 			EAGAIN, EINVAL, EPERM, ENOTRECOVERABLE, EOWNERDEAD, EDEADLK, EBUSY,
+ * 		pthread_unlock;
+ * 			EAGAIN, EINVAL, EPERM, ENOTRECOVERABLE, EOWNERDEAD, EDEADLK, EBUSY,
+ * 
+ * writes the error message and returns -1
  */
 static int	handle_pthread_error(int status)
 {
@@ -48,18 +50,18 @@ static int	handle_pthread_error(int status)
 
 /**
  * mutex functs:
+* 		pthread_mutex_init
+ * 			(pthread_mutex_t *restrict mutex, const pthread_mutexattr_t *restrict attr)
+ * 		pthread_mutex_destroy
+ * 			(pthread_mutex_t *mutex)
+ * 		pthread_mutex_lock
+ * 			(pthread_mutex_t *mutex)
+ * 		pthread_mutex_unlock
+ * 			(pthread_mutex_t *mutex)
+ * 		return
+ * 			0 in case of sucess, status code of error in case of error
  * 
- * pthread_mutex_init
- * 	(pthread_mutex_t *restrict mutex, const pthread_mutexattr_t *restrict attr)
- * pthread_mutex_destroy
- * 	(pthread_mutex_t *mutex)
- * pthread_mutex_lock
- * 	(pthread_mutex_t *mutex)
- * pthread_mutex_unlock
- * 	(pthread_mutex_t *mutex)
- * 
- * return
- * 0 in case of sucess, status code of error in case of error
+ * writes the error message and returns -1
  */
 int	safe_mutex_handle(t_mtx *mutex, t_opthread opthr)
 {
@@ -78,26 +80,26 @@ int	safe_mutex_handle(t_mtx *mutex, t_opthread opthr)
 
 /**
  * threads functs:
+ * 		pthread_create
+ * 			(pthread_t *thread, const pthread_attr_t *attr, 
+ * 			void *(*start_routine)(void *), void *arg)
+ * 		pthread_join
+ * 			(pthread_t thread, void **retval)
+ * 		pthread_detach
+ * 			(pthread_t thread)
+ * 		return
+ * 			0 in case of succes, status code of error in case of error
  * 
- * pthread_create
- * 	(pthread_t *thread, const pthread_attr_t *attr, 
- * 	void *(*start_routine)(void *), void *arg)
- * pthread_join
- * 	(pthread_t thread, void **retval)
- * pthread_detach
- * 	(pthread_t thread)
- * 
- * return
- * 0 in case of succes, status code of error in case of error
+ * writes the error message and returns -1 
  */
 int	safe_thread_handle(pthread_t *thr, void *(*f)(void *), void *data,
-	t_opthread opthr)
+	void **join_rtrn, t_opthread opthr)
 {
 	//dprintf(STDOUT_FILENO, "opthr: %d\n", opthr);
 	if (opthr == CREATE)
 		return (handle_pthread_error(pthread_create(thr, NULL, f, data)));
 	else if (opthr == JOIN)
-		return (handle_pthread_error(pthread_join(*thr, NULL)));
+		return (handle_pthread_error(pthread_join(*thr, join_rtrn)));
 	else if (opthr == DETACH)
 		return (handle_pthread_error(pthread_detach(*thr)));
 	else

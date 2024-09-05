@@ -154,8 +154,8 @@ void	philo_eat(t_philo *philo);
 
 /* pthread hanlders */
 int		safe_mutex_handle(t_mtx *mutex, t_opthread opthread);
-int		safe_thread_handle(pthread_t *thread, void *(*f)(void *), void *data,
-	t_opthread opthread);
+int		safe_thread_handle(pthread_t *thr, void *(*f)(void *), void *data,
+		void **join_rtrn, t_opthread opthr);
 
 /* monitor */
 void	*philo_monitor(void *data);

@@ -1,4 +1,5 @@
 #include "philo.h"
+#include <stdint.h> 
 
 // static void single_philo_routine(t_table *table)
 // {
@@ -69,10 +70,11 @@ int	philo_dinner(t_table *table)
 {
 	int		i;
 	t_philo	*philo;
+	int		*monitor_status;
 
 	//dprintf(STDOUT_FILENO, "\n[dinner_start]\n");
 	if (table->meal_limit == 0)
-		return ;
+		return (0);
 	// if (table->philos_nbr == 1)
 	// 	return (single_philo_routine(table));
 	i = -1;
@@ -80,11 +82,11 @@ int	philo_dinner(t_table *table)
 	{
 		philo = table->philos + (i * sizeof(t_philo));
 		//dprintf(STDOUT_FILENO, "starts routine [philo_id] %d [create thread] ", philo->id);
-		if (safe_thread_handle(&(philo->id_thread), philo_routine, philo, CREATE) < 0)
+		if (safe_thread_handle(&(philo->id_thread), philo_routine, philo, NULL, CREATE) < 0)
 			return (-1); //error -> might need to clean threads
 	}
 	//monitor philo's threadds
-	if (safe_thread_handle(&(table->monitor), philo_monitor, table, CREATE) < 0)
+	if (safe_thread_handle(&(table->monitor), philo_monitor, table, NULL, CREATE) < 0) //<-----
 		return (-1);
  	//gettime of dinner start
 	table->t_start = get_time(MILLISECOND);
@@ -97,13 +99,15 @@ int	philo_dinner(t_table *table)
 	while (++i < table->philos_nbr)
 	{
 		philo = table->philos + (i * sizeof(t_philo));
-		if (safe_thread_handle(&(philo->id_thread), NULL, NULL, JOIN) < 0)
+		if (safe_thread_handle(&(philo->id_thread), NULL, NULL, NULL, JOIN) < 0)
 			return (-1);
 	}
 	//if we manage to reach this point all philos are full
 	set_bool(&table->table_mtx, &table->is_finished, 1); //DATARACE
-	if (safe_thread_handle(&table->monitor, NULL, NULL, JOIN) < 0)
+	if (safe_thread_handle(&table->monitor, NULL, NULL, (void *)&monitor_status, JOIN) < 0)
 		return (-1);
-
+	//TODO: check monitor_status to check it, monitor checks if a philo has died
+	if (monitor_status && (intptr_t)monitor_status < 0)
+		return (-1);
 	return (0);
 }

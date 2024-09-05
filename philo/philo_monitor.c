@@ -1,14 +1,17 @@
 #include "philo.h"
 
+/** we return -1 in case  */
 static int are_all_philos_running(t_table *table)
 {
 	int	rslt;
 
 	rslt = 0;
-	safe_mutex_handle(&(table->table_mtx), LOCK);
+	if (safe_mutex_handle(&(table->table_mtx), LOCK) < 0)
+		return (-1);
 	if (table->philos_running_nbr == table->philos_nbr)
-		rslt = 1;
-	safe_mutex_handle(&(table->table_mtx), UNLOCK);
+		rslt = 1; //break while
+	if (safe_mutex_handle(&(table->table_mtx), UNLOCK) < 0)
+		return (-1);
 	return (rslt);
 }
 
@@ -35,12 +38,21 @@ void	*philo_monitor(void *data)
 {
 	t_table *table;
 	t_philo	*philo;
+	int		*status;
 	int		i;
 
 	table = data;
+	status = safe_malloc(sizeof(int));
+	if (!status)
+		return ((void *)-1);
 	//make sure all philos running, spinlock until all threads are running
-	while (are_all_philos_running(table) == 0)
-		;
+	status = are_all_philos_running(table);
+	while (status == 0)
+	{
+		status = are_all_philos_running(table);
+		if (status < 0)
+			return ((void *)-1);
+	}
 	while (is_finished(table) == 0)
 	{
 		i = -1;
@@ -52,9 +64,10 @@ void	*philo_monitor(void *data)
 			{
 				set_bool(&(table->table_mtx), &(table->is_finished), 1);
 				write_status(philo, DIE, DEBUG);
-				exit(0);
+				return ((void *)0);
 			}
 		}
 	}
+	//TODO:cambiar el return para poner un status de OK -> 0
 	return (NULL);
 }
