@@ -33,11 +33,11 @@ int	error_print(const char *error)
 }
 
 /* exit not allowed*/
-void	error_exit(const char *error)
-{
-	printf(RED"%s\n"WHITE, error);
-	exit(EXIT_FAILURE);
-}
+// void	error_exit(const char *error)
+// {
+// 	printf(RED"%s\n"WHITE, error);
+// 	exit(EXIT_FAILURE);
+// }
 /**
  * only using usleep when reaching a thereshold
  * usec (microseconds) < 1000

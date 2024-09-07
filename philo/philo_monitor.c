@@ -46,11 +46,11 @@ void	*philo_monitor(void *data)
 	if (!status)
 		return ((void *)-1);
 	//make sure all philos running, spinlock until all threads are running
-	status = are_all_philos_running(table);
-	while (status == 0)
+	*status = are_all_philos_running(table);
+	while (*status == 0)
 	{
-		status = are_all_philos_running(table);
-		if (status < 0)
+		*status = are_all_philos_running(table);
+		if (*status < 0)
 			return ((void *)-1);
 	}
 	while (is_finished(table) == 0)
@@ -68,6 +68,5 @@ void	*philo_monitor(void *data)
 			}
 		}
 	}
-	//TODO:cambiar el return para poner un status de OK -> 0
 	return (NULL);
 }

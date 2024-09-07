@@ -49,6 +49,22 @@ void	add_long(t_mtx *mtx, long *dst, long value_to_add)
 	safe_mutex_handle(mtx, UNLOCK);
 }
 
+/**
+ * Make the system Fair
+ */
+void	de_synchronize_philos(t_philo *philo)
+{
+	if (((t_table *)philo->table)->philos_nbr % 2 == 0 && philo->id % 2 == 0)
+	{
+		precision_usleep(philo->table, 3e4);
+	}
+	else
+	{
+		if (philo->id % 2 == 0)
+			philo_think(philo);
+	}
+}
+
 long	get_long(t_mtx *mtx, long *dst)
 {
 	long	rslt;
@@ -65,10 +81,10 @@ static void	write_status_debug(t_philo *philo, t_status status, long elapsed)
 	
 	table = philo->table;
 	if (status == FRST_FORK && is_finished(table) == 0)
-		printf(YELLOW"%-6ld %d took 1st fork [%d]\n"RESET, elapsed,
+		printf(YELLOW"%-6ld %d has taken the 1st fork [%d]\n"RESET, elapsed,
 		philo->id, philo->first_fork->fork_id);
 	else if (status == SCND_FORK && is_finished(table) == 0)
-		printf(YELLOW"%-6ld %d took 2nd fork [%d]\n"RESET, elapsed,
+		printf(YELLOW"%-6ld %d has taken the 2nd fork [%d]\n"RESET, elapsed,
 		philo->id, philo->secnd_fork->fork_id);
 	else if (status == EAT && is_finished(table) == 0)
 		printf(GREEN"%-6ld %d is eating [count: %ld]\n"RESET, elapsed,
@@ -78,7 +94,7 @@ static void	write_status_debug(t_philo *philo, t_status status, long elapsed)
 	else if (status == THINK && is_finished(table) == 0)
 		printf(GRAY"%-6ld %d is thinking\n"RESET, elapsed, philo->id);
 	else if (status == DIE)
-		printf(RED"%-6ld %d has died\n"RESET, elapsed, philo->id);
+		printf(RED"%-6ld %d died\n"RESET, elapsed, philo->id);
 }
 /**
  * [time_millisec] [philo_id] [action]
@@ -99,7 +115,7 @@ void	write_status(t_philo *philo, t_status status, int debug)
 	{
 		if ((status == FRST_FORK || status == SCND_FORK)
 			&& is_finished(table) == 0)
-			printf(YELLOW"%-6ld %d took a fork\n"RESET, elapsed, philo->id);
+			printf(YELLOW"%-6ld %d has taken a fork\n"RESET, elapsed, philo->id);
 		else if (status == EAT && is_finished(table) == 0)
 			printf(ORANGE"%-6ld %d is eating\n"RESET, elapsed, philo->id);
 		else if (status == SLEEP && is_finished(table) == 0)
@@ -107,7 +123,7 @@ void	write_status(t_philo *philo, t_status status, int debug)
 		else if (status == THINK && is_finished(table) == 0)
 			printf(GREEN"%-6ld %d is thinking\n"RESET, elapsed, philo->id);
 		else if (status == DIE)
-			printf(RED"%-6ld %d has died\n"RESET, elapsed, philo->id);
+			printf(RED"%-6ld %d died\n"RESET, elapsed, philo->id);
 	}
 	safe_mutex_handle(&table->write_mtx, UNLOCK);
 }

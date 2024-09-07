@@ -72,6 +72,7 @@ int	philo_dinner(t_table *table)
 	t_philo	*philo;
 	int		*monitor_status;
 
+	monitor_status = NULL;
 	//dprintf(STDOUT_FILENO, "\n[dinner_start]\n");
 	if (table->meal_limit == 0)
 		return (0);
@@ -86,7 +87,7 @@ int	philo_dinner(t_table *table)
 			return (-1); //error -> might need to clean threads
 	}
 	//monitor philo's threadds
-	if (safe_thread_handle(&(table->monitor), philo_monitor, table, NULL, CREATE) < 0) //<-----
+	if (safe_thread_handle(&(table->monitor), philo_monitor, table, NULL, CREATE) < 0)
 		return (-1);
  	//gettime of dinner start
 	table->t_start = get_time(MILLISECOND);
@@ -106,7 +107,7 @@ int	philo_dinner(t_table *table)
 	set_bool(&table->table_mtx, &table->is_finished, 1); //DATARACE
 	if (safe_thread_handle(&table->monitor, NULL, NULL, (void *)&monitor_status, JOIN) < 0)
 		return (-1);
-	//TODO: check monitor_status to check it, monitor checks if a philo has died
+	//Check monitor_status to check the return
 	if (monitor_status && (intptr_t)monitor_status < 0)
 		return (-1);
 	return (0);

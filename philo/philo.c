@@ -19,8 +19,11 @@ int	main(int argc, char **argv)
 	t_table	table;
 
 	if (argc < 5 || argc > 6)
-		error_exit("Invalid number of arguments\
+	{
+		error_print("Invalid number of arguments\
 		\nExample: ./philo 5 800 200 200 (5)");
+		exit (1);
+	}
 	//set table
 	memset((void *)&table, 0, sizeof(t_table)); //ft_bzero
 	if (table_init(&table, argv) < 0)

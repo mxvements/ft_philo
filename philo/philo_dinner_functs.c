@@ -13,7 +13,21 @@ void	philo_wait(t_table *table)
 
 void	philo_think(t_philo *philo)
 {
+	// long	t_eat;
+	// long	t_sleep;
+	// long	t_think;
+
 	write_status(philo, THINK, DEBUG);
+	// if (philo->table->philos_nbr % 2 == 0 && philo->id % 2 == 0)
+	// 	return ;
+	// if (philo->table->philos_nbr % 2 != 0 && philo->id % 2 == 0)
+	// 	return ;
+	// t_eat = philo->table->t_to_eat;
+	// t_sleep = philo->table->t_to_sleep;
+	// t_think = (t_eat * 2) - t_sleep;
+	// if (t_think < 0)
+	// 	t_think = 0;
+	// precision_usleep(philo->table, t_think * 0.42); //think some time, make the sys
 }
 
 void	philo_sleep(t_philo *philo)
