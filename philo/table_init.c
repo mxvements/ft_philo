@@ -1,7 +1,5 @@
 #include "philo.h"
 
-/* PARSE FUNCTS*/
-
 static int convert_parse(long *data, char **argv, int argidx)
 {
 	int			flag;
@@ -48,7 +46,7 @@ static int	parse_input(t_table *table, char **argv)
 	return (0);
 }
 
-static void forks_init(t_table *table)
+static int forks_init(t_table *table)
 {
 	int	i;
 	t_fork *fork;
@@ -58,11 +56,12 @@ static void forks_init(t_table *table)
 	while (++i < table->philos_nbr)
 	{
 		fork = table->forks + (i * sizeof(t_fork));
-		table->forks[i].fork_id = i;
-
+		table->forks[i].id = i;
 		//dprintf(STDOUT_FILENO, "[fork_id] %d [mutex init, fork] ", table->forks[i].fork_id);
-		safe_mutex_handle(&fork->fork, INIT);
+		if (safe_mtx_handle(&fork->fork_mtx, INIT) < 0)
+			return (error_print("Error on fork init"));
 	}
+	return (0);
 }
 /**
  * assing forks, 
@@ -84,10 +83,8 @@ static void	philos_init(t_table *table)
 		philo->is_full = 0;//false
 		philo->t_last_meal = 0;
 		philo->table = table;
-
 		//dprintf(STDOUT_FILENO, "[philo_id] %d [mutex init, philo_mtx] ", philo->id);
-		safe_mutex_handle(&philo->philo_mtx, INIT);
-		
+		safe_mtx_handle(&philo->philo_mtx, INIT);
 		if (philo->id % 2)
 		{
 			philo->first_fork = &table->forks[(i + 1) % table->philos_nbr];
@@ -115,13 +112,12 @@ int	table_init(t_table *table, char **argv)
 	if (!table->forks)
 		return (-1);
 	table->philos_running_nbr = 0;
-
 	//dprintf(STDOUT_FILENO, "[mutex init, table_mtx]\t");
-	safe_mutex_handle(&table->table_mtx, INIT); //thread to monitor table
-
+	if (safe_mtx_handle(&table->table_mtx, INIT) < 0) //thread to monitor table
+		return (-1);
 	//dprintf(STDOUT_FILENO, "[mutex init, write_mtx]\t");
-	safe_mutex_handle(&table->write_mtx, INIT);
-	
+	if (safe_mtx_handle(&table->write_mtx, INIT) < 0)
+		return (-1);
 	forks_init(table);
 	philos_init(table);
 	return (0);

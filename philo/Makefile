@@ -11,9 +11,12 @@ PHILO_FILES=	philo.c \
 				philo_monitor.c \
 				pthread_handle.c \
 				table_init.c \
+				table_destroy.c \
 				table_clean.c \
 				table_utils.c \
-				ft_atolf.c
+				ft_atolf.c \
+				ft_usleep.c \
+				ft_gettime.c
 
 #aux files
 # AUX_PATH=	./

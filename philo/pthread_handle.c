@@ -25,7 +25,7 @@
  * 
  * writes the error message and returns -1
  */
-static int	handle_pthread_error(int status)
+static int	pthr_error(int status)
 {
 	if (status == EAGAIN)
 		return (error_print("Resource temporarily unavailable"));
@@ -63,17 +63,17 @@ static int	handle_pthread_error(int status)
  * 
  * writes the error message and returns -1
  */
-int	safe_mutex_handle(t_mtx *mutex, t_opthread opthr)
+int	safe_mtx_handle(t_mtx *mutex, t_opthread opthr)
 {
 	//dprintf(STDOUT_FILENO, "opthr: %d\n", opthr);
 	if (opthr == INIT)
-		return (handle_pthread_error(pthread_mutex_init(mutex, NULL)));
+		return (pthr_error(pthread_mutex_init(mutex, NULL)));
 	else if (opthr == DESTROY)
-		return (handle_pthread_error(pthread_mutex_destroy(mutex)));
+		return (pthr_error(pthread_mutex_destroy(mutex)));
 	else if (opthr == LOCK)
-		return (handle_pthread_error(pthread_mutex_lock(mutex)));
+		return (pthr_error(pthread_mutex_lock(mutex)));
 	else if (opthr == UNLOCK)
-		return (handle_pthread_error(pthread_mutex_unlock(mutex)));
+		return (pthr_error(pthread_mutex_unlock(mutex)));
 	else
 		return (error_print("Wrong opthread"));
 }
@@ -92,16 +92,16 @@ int	safe_mutex_handle(t_mtx *mutex, t_opthread opthr)
  * 
  * writes the error message and returns -1 
  */
-int	safe_thread_handle(pthread_t *thr, void *(*f)(void *), void *data,
+int	safe_thr_handle(pthread_t *thr, void *(*f)(void *), void *data,
 	void **join_rtrn, t_opthread opthr)
 {
 	//dprintf(STDOUT_FILENO, "opthr: %d\n", opthr);
 	if (opthr == CREATE)
-		return (handle_pthread_error(pthread_create(thr, NULL, f, data)));
+		return (pthr_error(pthread_create(thr, NULL, f, data)));
 	else if (opthr == JOIN)
-		return (handle_pthread_error(pthread_join(*thr, join_rtrn)));
+		return (pthr_error(pthread_join(*thr, join_rtrn)));
 	else if (opthr == DETACH)
-		return (handle_pthread_error(pthread_detach(*thr)));
+		return (pthr_error(pthread_detach(*thr)));
 	else
 		return (error_print("Wrong opthread"));
 }

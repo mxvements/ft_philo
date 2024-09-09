@@ -17,61 +17,45 @@ void	*safe_malloc(size_t bytes)
 
 void	set_bool(t_mtx *mtx, int *dst, int value)
 {
-	safe_mutex_handle(mtx, LOCK);
+	safe_mtx_handle(mtx, LOCK);
 	*dst = value;
-	safe_mutex_handle(mtx, UNLOCK);
+	safe_mtx_handle(mtx, UNLOCK);
 }
 
 int		get_bool(t_mtx *mtx, int *dst)
 {
 	int	rslt;
 
-	safe_mutex_handle(mtx, LOCK);
+	safe_mtx_handle(mtx, LOCK);
 	rslt = *dst;
-	safe_mutex_handle(mtx, UNLOCK);
+	safe_mtx_handle(mtx, UNLOCK);
 	return (rslt);
 }
 
 void	set_long(t_mtx *mtx, long *dst, long value)
 {
-	safe_mutex_handle(mtx, LOCK);
+	safe_mtx_handle(mtx, LOCK);
 	*dst = value;
-	safe_mutex_handle(mtx, UNLOCK);
+	safe_mtx_handle(mtx, UNLOCK);
 }
 
 void	add_long(t_mtx *mtx, long *dst, long value_to_add)
 {
 	int	value;
 
-	safe_mutex_handle(mtx, LOCK);
+	safe_mtx_handle(mtx, LOCK);
 	value = *dst;
 	*dst = value + value_to_add;
-	safe_mutex_handle(mtx, UNLOCK);
-}
-
-/**
- * Make the system Fair
- */
-void	de_synchronize_philos(t_philo *philo)
-{
-	if (((t_table *)philo->table)->philos_nbr % 2 == 0 && philo->id % 2 == 0)
-	{
-		precision_usleep(philo->table, 3e4);
-	}
-	else
-	{
-		if (philo->id % 2 == 0)
-			philo_think(philo);
-	}
+	safe_mtx_handle(mtx, UNLOCK);
 }
 
 long	get_long(t_mtx *mtx, long *dst)
 {
 	long	rslt;
 
-	safe_mutex_handle(mtx, LOCK);
+	safe_mtx_handle(mtx, LOCK);
 	rslt = *dst;
-	safe_mutex_handle(mtx, UNLOCK);
+	safe_mtx_handle(mtx, UNLOCK);
 	return (rslt);
 }
 
@@ -82,10 +66,10 @@ static void	write_status_debug(t_philo *philo, t_status status, long elapsed)
 	table = philo->table;
 	if (status == FRST_FORK && is_finished(table) == 0)
 		printf(YELLOW"%-6ld %d has taken the 1st fork [%d]\n"RESET, elapsed,
-		philo->id, philo->first_fork->fork_id);
+		philo->id, philo->first_fork->id);
 	else if (status == SCND_FORK && is_finished(table) == 0)
 		printf(YELLOW"%-6ld %d has taken the 2nd fork [%d]\n"RESET, elapsed,
-		philo->id, philo->secnd_fork->fork_id);
+		philo->id, philo->secnd_fork->id);
 	else if (status == EAT && is_finished(table) == 0)
 		printf(GREEN"%-6ld %d is eating [count: %ld]\n"RESET, elapsed,
 		philo->id, philo->meals_count);
@@ -105,10 +89,10 @@ void	write_status(t_philo *philo, t_status status, int debug)
 	long	elapsed;
 
 	table = philo->table;
-	elapsed = get_time(MILLISECOND) - ((t_table*)philo->table)->t_start;
+	elapsed = ft_gettime(MILLISECOND) - ((t_table*)philo->table)->t_start;
 	if (philo->is_full == 1) //THREAD_SAFE?
 		return ;
-	safe_mutex_handle(&table->write_mtx, LOCK);
+	safe_mtx_handle(&table->write_mtx, LOCK);
 	if (debug)
 		write_status_debug(philo, status, elapsed);
 	else
@@ -125,5 +109,22 @@ void	write_status(t_philo *philo, t_status status, int debug)
 		else if (status == DIE)
 			printf(RED"%-6ld %d died\n"RESET, elapsed, philo->id);
 	}
-	safe_mutex_handle(&table->write_mtx, UNLOCK);
+	safe_mtx_handle(&table->write_mtx, UNLOCK);
 }
+
+/**
+ * Make the system Fair
+ */
+void	de_synchronize_philos(t_philo *philo)
+{
+	if (((t_table *)philo->table)->philos_nbr % 2 == 0 && philo->id % 2 == 0)
+	{
+		ft_usleep(philo->table, 3e4);
+	}
+	else
+	{
+		if (philo->id % 2 == 0)
+			philo_think(philo, 1);
+	}
+}
+

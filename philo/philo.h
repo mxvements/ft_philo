@@ -41,7 +41,7 @@
 # define BG_GRAY "\x1B[48;2;176;174;174m"
 # define BG_ROSE "\x1B[48;2;255;151;203m"
 
-# define DEBUG	0
+# define DEBUG	1
 /* --------------------------------------------------------------------------*/
 typedef pthread_mutex_t t_mtx;
 
@@ -86,8 +86,8 @@ typedef enum e_status
 
 typedef struct s_fork
 {
-	t_mtx	fork;
-	int		fork_id;
+	t_mtx	fork_mtx;
+	int		id;
 }	t_fork;
 
 typedef struct s_philo
@@ -132,9 +132,7 @@ int		philo_dinner(t_table *table);
 void	table_print(t_table *table);
 int		is_finished(t_table *table);
 int		error_print(const char *error);
-void	error_exit(const char *error); //NOT ALLOWED
-long	get_time(t_time time_code);
-void	precision_usleep(t_table *table, long usec);
+void	table_free(t_table *table);
 
 /* philo utils */
 void	*safe_malloc(size_t bytes);
@@ -144,17 +142,18 @@ void	set_long(t_mtx *mtx, long *dst, long value);
 void	add_long(t_mtx *mtx, long *dst, long value_to_add);
 long	get_long(t_mtx *mtx, long *dst);
 void	write_status(t_philo *philo, t_status status, int debug);
+void	de_synchronize_philos(t_philo *philo);
 
 /** routine */
 void	set_last_meal_time(t_philo *philo);
 void	philo_wait(t_table *table);
-void	philo_think(t_philo *philo);
+void	philo_think(t_philo *philo, int flag);
 void	philo_sleep(t_philo *philo);
 void	philo_eat(t_philo *philo);
 
 /* pthread hanlders */
-int		safe_mutex_handle(t_mtx *mutex, t_opthread opthread);
-int		safe_thread_handle(pthread_t *thr, void *(*f)(void *), void *data,
+int		safe_mtx_handle(t_mtx *mutex, t_opthread opthread);
+int		safe_thr_handle(pthread_t *thr, void *(*f)(void *), void *data,
 		void **join_rtrn, t_opthread opthr);
 
 /* monitor */
@@ -162,5 +161,7 @@ void	*philo_monitor(void *data);
 
 /* aux functions*/
 long	ft_atolf(char *s, int *flag);
+long	ft_gettime(t_time time_code);
+void	ft_usleep(t_table *table, long usec);
 
 #endif

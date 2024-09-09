@@ -6,11 +6,11 @@ static int are_all_philos_running(t_table *table)
 	int	rslt;
 
 	rslt = 0;
-	if (safe_mutex_handle(&(table->table_mtx), LOCK) < 0)
+	if (safe_mtx_handle(&(table->table_mtx), LOCK) < 0)
 		return (-1);
 	if (table->philos_running_nbr == table->philos_nbr)
 		rslt = 1; //break while
-	if (safe_mutex_handle(&(table->table_mtx), UNLOCK) < 0)
+	if (safe_mtx_handle(&(table->table_mtx), UNLOCK) < 0)
 		return (-1);
 	return (rslt);
 }
@@ -25,7 +25,7 @@ static int philo_died(t_philo *philo)
 	if (get_bool(&(philo->philo_mtx), &(philo->is_full)) == 1)
 		return (0);
 	t_last_meal = get_long(&(philo->philo_mtx), &(philo->t_last_meal)); //MILLISECONDS
-	elapsed = get_time(MILLISECOND) - (t_last_meal);
+	elapsed = ft_gettime(MILLISECOND) - (t_last_meal);
 	//convert back to millisecond
 	t_to_die = (((t_table *)(philo->table))->t_to_die)/1e3;	
 	if (elapsed > t_to_die)
