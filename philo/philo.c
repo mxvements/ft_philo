@@ -21,6 +21,9 @@
  *		3 310 103 103 (tienen que vivir) 
  *		3 310 104 104 (tienen que morir) 
  * y si no te lo hace bien te lo tire
+
+ * ncdu  en el directorio root para ver el cache
+
  */
 int	main(int argc, char **argv)
 {

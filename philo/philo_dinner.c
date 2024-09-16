@@ -45,6 +45,7 @@ static void	*philo_routine(void *arg)
  * 		- Syncronize the beginning of the simulation
  * 		- Join everyone
 */
+
 int	philo_dinner(t_table *table)
 {
 	int		i;
@@ -69,7 +70,12 @@ int	philo_dinner(t_table *table)
 		if (safe_thr_handle(&(philo->id_thread), philo_routine, philo, NULL, CREATE) < 0)
 			return (-1); //error -> might need to clean threads
 	}
- 	//gettime of dinner start
+	/*
+		si i == nbr de philos
+		bool = true
+ 	*/
+	
+	//gettime of dinner start
 	table->t_start = ft_gettime(MILLISECOND);
 	if (table->t_start < 0)
 		return (-1);

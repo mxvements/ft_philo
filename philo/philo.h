@@ -41,9 +41,9 @@
 # define BG_GRAY "\x1B[48;2;176;174;174m"
 # define BG_ROSE "\x1B[48;2;255;151;203m"
 
-# define DEBUG	1
+# define DEBUG	0
 /* --------------------------------------------------------------------------*/
-typedef pthread_mutex_t t_mtx;
+typedef pthread_mutex_t	t_mtx;
 
 /** Allowed functions:
  * 	threads:
@@ -56,7 +56,7 @@ typedef pthread_mutex_t t_mtx;
  * 		pthread_mutex_lock
  * 		pthread_mutex_unlock
  */
-typedef enum e_opthread
+typedef enum	e_opthread
 {
 	CREATE,		//0
 	DETACH,		//1
@@ -67,14 +67,14 @@ typedef enum e_opthread
 	UNLOCK		//6
 }	t_opthread;
 
-typedef enum e_time
+typedef enum	e_time
 {
 	SECOND,
 	MILLISECOND,
 	MICROSECOND
 }	t_time;
 
-typedef enum e_status
+typedef enum	e_status
 {
 	EAT,
 	SLEEP,
@@ -84,7 +84,7 @@ typedef enum e_status
 	DIE
 }	t_status;
 
-typedef struct s_fork
+typedef struct	s_fork
 {
 	t_mtx	fork_mtx;
 	int		id;
@@ -154,7 +154,7 @@ void	philo_eat(t_philo *philo);
 /* pthread hanlders */
 int		safe_mtx_handle(t_mtx *mutex, t_opthread opthread);
 int		safe_thr_handle(pthread_t *thr, void *(*f)(void *), void *data,
-		void **join_rtrn, t_opthread opthr);
+			void **join_rtrn, t_opthread opthr);
 
 /* monitor */
 void	*philo_monitor(void *data);
