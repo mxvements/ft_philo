@@ -55,10 +55,10 @@ static int forks_init(t_table *table)
 	i = -1;
 	while (++i < table->philos_nbr)
 	{
-		fork = table->forks + (i * sizeof(t_fork));
+		fork = &(table->forks[i]);
 		table->forks[i].id = i;
 		//dprintf(STDOUT_FILENO, "[fork_id] %d [mutex init, fork] ", table->forks[i].fork_id);
-		if (safe_mtx_handle(&fork->fork_mtx, INIT) < 0)
+		if (safe_mtx_handle(&(fork->fork_mtx), INIT) < 0)
 			return (error_print("Error on fork init"));
 	}
 	return (0);
@@ -77,7 +77,7 @@ static void	philos_init(t_table *table)
 	//dprintf(STDOUT_FILENO, "\n[philos_init]\n");
 	while (++i < table->philos_nbr)
 	{
-		philo = table->philos + (i * sizeof(t_philo));
+		philo = &(table->philos[i]);
 		philo->id = i + 1;
 		philo->meals_count = 0;
 		philo->is_full = 0;//false
@@ -105,13 +105,13 @@ int	table_init(t_table *table, char **argv)
 		return (-1);
 	table->is_finished = 0; //false
 	table->is_ready = 0; //false
-	table->philos = safe_malloc(table->philos_nbr * sizeof(t_philo)); //array of philos
+	table->philos_running_nbr = 0;
+	table->philos = safe_malloc((table->philos_nbr) * sizeof(t_philo)); //array of philos
 	if (!table->philos)
 		return (-1);
-	table->forks = safe_malloc(table->philos_nbr * sizeof(t_fork)); //array of forks
+	table->forks = safe_malloc((table->philos_nbr) * sizeof(t_fork)); //array of forks
 	if (!table->forks)
 		return (-1);
-	table->philos_running_nbr = 0;
 	//dprintf(STDOUT_FILENO, "[mutex init, table_mtx]\t");
 	if (safe_mtx_handle(&table->table_mtx, INIT) < 0) //thread to monitor table
 		return (-1);

@@ -105,14 +105,14 @@ typedef struct s_philo
 
 typedef struct s_table
 {
-	long		philos_nbr;
+	long		philos_nbr; //init on parse_inpute
 	long		philos_running_nbr; //to monitor
 	pthread_t	monitor;
 	long		t_start;
-	long		t_to_die;
-	long		t_to_eat;
-	long		t_to_sleep;
-	long		meal_limit;
+	long		t_to_die; //init on parse_inpute
+	long		t_to_eat; //init on parse_inpute
+	long		t_to_sleep; //init on parse_inpute
+	long		meal_limit; //init on parse_inpute
 	int			is_finished; //boolean, when a philo dies or all philos are full
 	int			is_ready; //are all philos ready, to synchro philosophers
 	t_fork		*forks; //array, ptr to first element

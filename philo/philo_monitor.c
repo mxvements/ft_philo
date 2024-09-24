@@ -27,13 +27,12 @@ static int philo_died(t_philo *philo)
 	t_last_meal = get_long(&(philo->philo_mtx), &(philo->t_last_meal)); //MILLISECONDS
 	elapsed = ft_gettime(MILLISECOND) - (t_last_meal);
 	//convert back to millisecond
-	t_to_die = (((t_table *)(philo->table))->t_to_die)/1e3;	
+	t_to_die = (((t_table *)(philo->table))->t_to_die)/1e3;	//SEGFAULT, table is NULL
 	if (elapsed > t_to_die)
 		return (1);
 	return (0);
 }
 
-/* ESTAS AQUI, como gestionas el error de are_all_philos_running con un -1*/
 void	*philo_monitor(void *data)
 {
 	t_table *table;
@@ -59,7 +58,7 @@ void	*philo_monitor(void *data)
 		while (++i < table->philos_nbr
 			&& get_bool(&table->table_mtx, &table->is_finished) == 0)
 		{
-			philo = table->philos + (i * sizeof(t_philo));
+			philo = &(table->philos[i]);
 			if (philo_died(philo) == 1)
 			{
 				set_bool(&(table->table_mtx), &(table->is_finished), 1);

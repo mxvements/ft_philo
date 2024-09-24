@@ -6,10 +6,10 @@ static void forks_free(t_table *table)
 	int		i;
 
 	i = -1;
-	while (++i < table->philo_nbr)
+	while (++i < table->philos_nbr)
 	{
 		fork = table->forks + (i * sizeof(t_fork));
-		safe_mutex_handle(fork, DESTROY); //do not protect
+		safe_mtx_handle(&(fork->fork_mtx), DESTROY); //do not protect
 	}
 	free(table->forks);
 }
@@ -22,13 +22,13 @@ void	table_clean(t_table *table)
 {
 	if (table->philos)
 	{
-		memset(table->philos, 0, sizeof(t_philo) * table->philo_nbr); //clean mem space of the array
+		memset(table->philos, 0, sizeof(t_philo) * table->philos_nbr); //clean mem space of the array
 		table->philos = NULL;
 	}
 	if (table->forks)
 	{
 		forks_free(table); //DUDAS
-		memset(table->forks, 0, sizeof(t_table) * table->philo_nbr); //clean mem space of the array
+		memset(table->forks, 0, sizeof(t_table) * table->philos_nbr); //clean mem space of the array
 		table->forks = NULL;
 	}
 	//free(table);

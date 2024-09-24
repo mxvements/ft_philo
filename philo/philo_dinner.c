@@ -65,7 +65,7 @@ int	philo_dinner(t_table *table)
 	i = -1;
 	while (++i < table->philos_nbr)
 	{
-		philo = table->philos + (i * sizeof(t_philo));
+		philo = &(table->philos[i]);
 		//dprintf(STDOUT_FILENO, "starts routine [philo_id] %d [create thread] ", philo->id);
 		if (safe_thr_handle(&(philo->id_thread), philo_routine, philo, NULL, CREATE) < 0)
 			return (-1); //error -> might need to clean threads
@@ -85,7 +85,7 @@ int	philo_dinner(t_table *table)
 	i = -1;
 	while (++i < table->philos_nbr)
 	{
-		philo = table->philos + (i * sizeof(t_philo));
+		philo = &(table->philos[i]);
 		if (safe_thr_handle(&(philo->id_thread), NULL, NULL, NULL, JOIN) < 0)
 			return (-1);
 	}

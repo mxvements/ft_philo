@@ -1,6 +1,6 @@
 NAME=philo
 CC=gcc
-CFLAGS=-Wall -Wextra -Werror -g3 -fsanitize=thread
+CFLAGS=-Wall -Wextra -Werror -g3
 
 #philo
 PHILO_PATH=		./
