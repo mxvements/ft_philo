@@ -46,5 +46,6 @@ int	main(int argc, char **argv)
 		table_free(&table);
 		return (1);
 	}
+	table_free(&table);
 	return (0);
 }

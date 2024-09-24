@@ -37,19 +37,17 @@ void	*philo_monitor(void *data)
 {
 	t_table *table;
 	t_philo	*philo;
-	int		*status;
+	int		status;
 	int		i;
 
 	table = data;
-	status = safe_malloc(sizeof(int));
-	if (!status)
-		return ((void *)-1);
+	//status = 0;
 	//make sure all philos running, spinlock until all threads are running
-	*status = are_all_philos_running(table);
-	while (*status == 0)
+	status = are_all_philos_running(table);
+	while (status == 0)
 	{
-		*status = are_all_philos_running(table);
-		if (*status < 0)
+		status = are_all_philos_running(table);
+		if (status < 0)
 			return ((void *)-1);
 	}
 	while (is_finished(table) == 0)

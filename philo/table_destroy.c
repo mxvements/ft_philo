@@ -15,10 +15,10 @@ static void	table_mtx_destroy(t_table *table)
 	i = -1;
 	while (++i < table->philos_nbr)
 	{
-		philo = table->philos + (i * sizeof(t_philo));
+		philo = &(table->philos[i]);
 		if (philo->id > 0 && safe_mtx_handle(&philo->philo_mtx, DESTROY) < 0)
 			error_print("Error destroying philo_mtx");
-		fork = table->forks + (i * sizeof(t_fork));
+		fork = &(table->forks[i]);
 		if (fork->id >= 0 && safe_mtx_handle(&fork->fork_mtx, DESTROY) < 0)
 			error_print("Error destroying fork_mtx");
 	}
