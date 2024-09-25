@@ -1,8 +1,19 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   ft_atolf.c                                         :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: luciama2 <luciama2@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/09/25 21:13:57 by luciama2          #+#    #+#             */
+/*   Updated: 2024/09/25 21:15:22 by luciama2         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 
 #include "philo.h"
 #include <limits.h>
 
-static int ft_isspace(int c)
+static int	ft_isspace(int c)
 {
 	int	flag;
 
@@ -15,7 +26,7 @@ static int ft_isspace(int c)
 	return (flag);
 }
 
-static int ft_isdigit(int c)
+static int	ft_isdigit(int c)
 {
 	int	flag;
 
@@ -42,7 +53,7 @@ static int ft_isdigit(int c)
  */
 long	ft_atolf(char *s, int *flag)
 {
-	long long 	nbr;
+	long long	nbr;
 	int			sign;
 
 	sign = 1;

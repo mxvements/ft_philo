@@ -62,10 +62,12 @@ static int	pthr_error(int status)
  * 			0 in case of sucess, status code of error in case of error
  * 
  * writes the error message and returns -1
+ *
+ * to debug use:
+ * 		dprintf(STDOUT_FILENO, "opthr: %d\n", opthr)
  */
 int	safe_mtx_handle(t_mtx *mutex, t_opthread opthr)
 {
-	//dprintf(STDOUT_FILENO, "opthr: %d\n", opthr);
 	if (opthr == INIT)
 		return (pthr_error(pthread_mutex_init(mutex, NULL)));
 	else if (opthr == DESTROY)
@@ -90,7 +92,10 @@ int	safe_mtx_handle(t_mtx *mutex, t_opthread opthr)
  * 		return
  * 			0 in case of succes, status code of error in case of error
  * 
- * writes the error message and returns -1 
+ * writes the error message and returns -1
+ * 
+ * to debug use:
+ * 		dprintf(STDOUT_FILENO, "opthr: %d\n", opthr)
  */
 int	safe_thr_handle(pthread_t *thr, void *(*f)(void *), void *data,
 	void **join_rtrn, t_opthread opthr)
