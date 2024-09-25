@@ -58,13 +58,13 @@ typedef pthread_mutex_t	t_mtx;
  */
 typedef enum	e_opthread
 {
-	CREATE,		//0
-	DETACH,		//1
-	JOIN,		//2
-	INIT,		//3
-	DESTROY,	//4
-	LOCK,		//5
-	UNLOCK		//6
+	CREATE,
+	DETACH,
+	JOIN,
+	INIT,
+	DESTROY,
+	LOCK,
+	UNLOCK
 }	t_opthread;
 
 typedef enum	e_time
@@ -93,30 +93,30 @@ typedef struct	s_fork
 typedef struct s_philo
 {
 	int				id;
-	pthread_t		id_thread; //a philo is a thread
+	pthread_t		id_thread;
 	t_fork			*first_fork;
 	t_fork			*secnd_fork;
 	long			meals_count;
-	long			t_last_meal; //time passed from last meal
-	int				is_full; //(boolean)
+	long			t_last_meal;
+	int				is_full;
 	struct s_table	*table;
 	t_mtx			philo_mtx;
 }	t_philo;
 
 typedef struct s_table
 {
-	long		philos_nbr; //init on parse_inpute
-	long		philos_running_nbr; //to monitor
+	long		philos_nbr;
+	long		philos_running_nbr;
 	pthread_t	monitor;
 	long		t_start;
-	long		t_to_die; //init on parse_inpute
-	long		t_to_eat; //init on parse_inpute
-	long		t_to_sleep; //init on parse_inpute
-	long		meal_limit; //init on parse_inpute
-	int			is_finished; //boolean, when a philo dies or all philos are full
-	int			is_ready; //are all philos ready, to synchro philosophers
-	t_fork		*forks; //array, ptr to first element
-	t_philo		*philos; //array, ptr to first element
+	long		t_to_die;
+	long		t_to_eat;
+	long		t_to_sleep;
+	long		meal_limit;
+	int			is_finished; 
+	int			is_ready;
+	t_fork		*forks;
+	t_philo		*philos;
 	t_mtx		table_mtx;
 	t_mtx		write_mtx;
 }	t_table;

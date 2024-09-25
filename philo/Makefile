@@ -6,6 +6,8 @@ CFLAGS=-Wall -Wextra -Werror -g3
 PHILO_PATH=		./
 PHILO_FILES=	philo.c \
 				philo_utils.c \
+				philo_utils_bool.c \
+				philo_utils_long.c \
 				philo_dinner.c \
 				philo_dinner_functs.c \
 				philo_monitor.c \

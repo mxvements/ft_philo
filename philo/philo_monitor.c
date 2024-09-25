@@ -9,7 +9,7 @@ static int are_all_philos_running(t_table *table)
 	if (safe_mtx_handle(&(table->table_mtx), LOCK) < 0)
 		return (-1);
 	if (table->philos_running_nbr == table->philos_nbr)
-		rslt = 1; //break while
+		rslt = 1;
 	if (safe_mtx_handle(&(table->table_mtx), UNLOCK) < 0)
 		return (-1);
 	return (rslt);

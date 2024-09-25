@@ -1,6 +1,21 @@
 
 #include "philo.h"
 
+/**
+ * Make the system Fair
+ */
+void	de_synchronize_philos(t_philo *philo)
+{
+	if (((t_table *)philo->table)->philos_nbr % 2 == 0 && philo->id % 2 == 0)
+	{
+		ft_usleep(philo->table, 3e4);
+	}
+	else
+	{
+		if (philo->id % 2 == 0)
+			philo_think(philo, 1);
+	}
+}
 
 void	*safe_malloc(size_t bytes)
 {
@@ -12,50 +27,6 @@ void	*safe_malloc(size_t bytes)
 		error_print("Malloc error");
 		return (NULL);
 	}
-	return (rslt);
-}
-
-void	set_bool(t_mtx *mtx, int *dst, int value)
-{
-	safe_mtx_handle(mtx, LOCK);
-	*dst = value;
-	safe_mtx_handle(mtx, UNLOCK);
-}
-
-int		get_bool(t_mtx *mtx, int *dst)
-{
-	int	rslt;
-
-	safe_mtx_handle(mtx, LOCK);
-	rslt = *dst;
-	safe_mtx_handle(mtx, UNLOCK);
-	return (rslt);
-}
-
-void	set_long(t_mtx *mtx, long *dst, long value)
-{
-	safe_mtx_handle(mtx, LOCK);
-	*dst = value;
-	safe_mtx_handle(mtx, UNLOCK);
-}
-
-void	add_long(t_mtx *mtx, long *dst, long value_to_add)
-{
-	int	value;
-
-	safe_mtx_handle(mtx, LOCK);
-	value = *dst;
-	*dst = value + value_to_add;
-	safe_mtx_handle(mtx, UNLOCK);
-}
-
-long	get_long(t_mtx *mtx, long *dst)
-{
-	long	rslt;
-
-	safe_mtx_handle(mtx, LOCK);
-	rslt = *dst;
-	safe_mtx_handle(mtx, UNLOCK);
 	return (rslt);
 }
 
@@ -110,21 +81,5 @@ void	write_status(t_philo *philo, t_status status, int debug)
 			printf(RED"%-6ld %d died\n"RESET, elapsed, philo->id);
 	}
 	safe_mtx_handle(&table->write_mtx, UNLOCK);
-}
-
-/**
- * Make the system Fair
- */
-void	de_synchronize_philos(t_philo *philo)
-{
-	if (((t_table *)philo->table)->philos_nbr % 2 == 0 && philo->id % 2 == 0)
-	{
-		ft_usleep(philo->table, 3e4);
-	}
-	else
-	{
-		if (philo->id % 2 == 0)
-			philo_think(philo, 1);
-	}
 }
 
