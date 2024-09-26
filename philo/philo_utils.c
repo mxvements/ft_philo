@@ -6,7 +6,7 @@
 /*   By: luciama2 <luciama2@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/25 21:06:26 by luciama2          #+#    #+#             */
-/*   Updated: 2024/09/25 21:17:28 by luciama2         ###   ########.fr       */
+/*   Updated: 2024/09/26 20:49:23 by luciama2         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,18 +45,18 @@ static void	write_status_debug(t_philo *philo, t_status status, long elapsed)
 	t_table	*table;
 
 	table = philo->table;
-	if (status == FRST_FORK && is_finished(table) == 0)
+	if (status == FRST_FORK && is_table_finished(table) == 0)
 		printf(YLLW"%-6ld %d has taken the 1st fork [%d]\n"RESET, elapsed,
 			philo->id, philo->first_fork->id);
-	else if (status == SCND_FORK && is_finished(table) == 0)
+	else if (status == SCND_FORK && is_table_finished(table) == 0)
 		printf(YLLW"%-6ld %d has taken the 2nd fork [%d]\n"RESET, elapsed,
 			philo->id, philo->secnd_fork->id);
-	else if (status == EAT && is_finished(table) == 0)
+	else if (status == EAT && is_table_finished(table) == 0)
 		printf(GREEN"%-6ld %d is eating [count: %ld]\n"RESET, elapsed,
 			philo->id, philo->meals_count);
-	else if (status == SLEEP && is_finished(table) == 0)
+	else if (status == SLEEP && is_table_finished(table) == 0)
 		printf(CYAN"%-6ld %d is sleeping\n"RESET, elapsed, philo->id);
-	else if (status == THINK && is_finished(table) == 0)
+	else if (status == THINK && is_table_finished(table) == 0)
 		printf(GRAY"%-6ld %d is thinking\n"RESET, elapsed, philo->id);
 	else if (status == DIE)
 		printf(RED"%-6ld %d died\n"RESET, elapsed, philo->id);
@@ -81,13 +81,13 @@ void	write_status(t_philo *philo, t_status status, int debug)
 	else
 	{
 		if ((status == FRST_FORK || status == SCND_FORK)
-			&& is_finished(table) == 0)
+			&& is_table_finished(table) == 0)
 			printf(YLLW"%-6ld %d has taken a fork\n"RESET, elapsed, philo->id);
-		else if (status == EAT && is_finished(table) == 0)
+		else if (status == EAT && is_table_finished(table) == 0)
 			printf(ORANGE"%-6ld %d is eating\n"RESET, elapsed, philo->id);
-		else if (status == SLEEP && is_finished(table) == 0)
+		else if (status == SLEEP && is_table_finished(table) == 0)
 			printf(CYAN"%-6ld %d is sleeping\n"RESET, elapsed, philo->id);
-		else if (status == THINK && is_finished(table) == 0)
+		else if (status == THINK && is_table_finished(table) == 0)
 			printf(GREEN"%-6ld %d is thinking\n"RESET, elapsed, philo->id);
 		else if (status == DIE)
 			printf(RED"%-6ld %d died\n"RESET, elapsed, philo->id);

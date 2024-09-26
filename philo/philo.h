@@ -130,7 +130,7 @@ int		philo_dinner(t_table *table);
 
 /* table utils */
 void	table_print(t_table *table);
-int		is_finished(t_table *table);
+int		is_table_finished(t_table *table);
 int		error_print(const char *error);
 void	table_free(t_table *table);
 
@@ -145,7 +145,6 @@ void	write_status(t_philo *philo, t_status status, int debug);
 void	de_synchronize_philos(t_philo *philo);
 
 /** routine */
-void	set_last_meal_time(t_philo *philo);
 void	philo_wait(t_table *table);
 void	philo_think(t_philo *philo, int flag);
 void	philo_sleep(t_philo *philo);

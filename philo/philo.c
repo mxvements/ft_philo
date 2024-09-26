@@ -6,7 +6,7 @@
 /*   By: luciama2 <luciama2@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/25 20:39:47 by luciama2          #+#    #+#             */
-/*   Updated: 2024/09/25 21:35:58 by luciama2         ###   ########.fr       */
+/*   Updated: 2024/09/26 21:17:43 by luciama2         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,14 +24,16 @@
  * 	number_of_imes_each_philosopher_must_eat (optional)
  * 
  * 	cases to check:
- *		1 800 200 200 muere
+ *		1 800 200 200 muere -> CHECK EXIT
  *		5 800 200 200 viven
  *		5 800 200 200 7 viven y cada uno come 7 veces
  *		4 410 200 200 viven
  *		4 310 200 100 mueren
  * 
  *		3 310 103 103 (tienen que vivir) 
- *		3 310 104 104 (tienen que morir) 
+ *		3 310 104 104 (tienen que morir)
+ * 
+ * 		210 100 200 200 (no deberian morir)
  * y si no te lo hace bien te lo tire
 
  * ncdu  en el directorio root para ver el cache
@@ -60,3 +62,4 @@ int	main(int argc, char **argv)
 	}
 	table_free(&table);
 	return (0);
+}

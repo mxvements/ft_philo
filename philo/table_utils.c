@@ -6,13 +6,13 @@
 /*   By: luciama2 <luciama2@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/25 21:05:23 by luciama2          #+#    #+#             */
-/*   Updated: 2024/09/25 21:13:44 by luciama2         ###   ########.fr       */
+/*   Updated: 2024/09/26 20:49:23 by luciama2         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
 
-int	is_finished(t_table *table)
+int	is_table_finished(t_table *table)
 {
 	return (get_bool(&table->table_mtx, &table->is_finished));
 }

@@ -6,7 +6,7 @@
 /*   By: luciama2 <luciama2@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/25 21:14:05 by luciama2          #+#    #+#             */
-/*   Updated: 2024/09/25 21:15:46 by luciama2         ###   ########.fr       */
+/*   Updated: 2024/09/26 20:49:23 by luciama2         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,7 @@ void	ft_usleep(t_table *table, long micro_s)
 	start = ft_gettime(MICROSECOND);
 	while ((ft_gettime(MICROSECOND) - start) < micro_s)
 	{
-		if (is_finished(table) == 1)
+		if (is_table_finished(table) == 1)
 			break ;
 		elapsed = ft_gettime(MICROSECOND) - start;
 		remaining = micro_s - elapsed;

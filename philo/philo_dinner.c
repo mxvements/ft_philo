@@ -6,21 +6,28 @@
 /*   By: luciama2 <luciama2@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/25 21:15:59 by luciama2          #+#    #+#             */
-/*   Updated: 2024/09/25 21:16:00 by luciama2         ###   ########.fr       */
+/*   Updated: 2024/09/26 20:49:23 by luciama2         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
-#include <stdint.h> 
+#include <stdint.h>
 
 /**
- * we need to
- * - wait all philos (sinchronization)
- * - endlees loop:
- * 	- check time to die
- * 	- time to eat
- * 	- time to sleep
-*/
+ * Philo routine logic:
+ *
+ * 1 - Before the exercise routine
+ * 		wait until all threads are ready
+ * 		update t_last_meal
+ * 		update philo_running_nbr -> check how many are already on the routine
+ * 		de_synchronize_philos ->
+ * 		check any philo needs to start thinking (ft_usleep) without the status
+ *
+ * 2 - eat, sleep, think
+ * 		while nobody has finished (in case of meal_limit)
+ * 		* this is where the infinite loop of the philos happens
+ * 		(table->is-finished) only gets updated when a philo dies or they're full
+ */
 static void	*philo_routine(void *arg)
 {
 	t_philo	*philo;
@@ -28,15 +35,13 @@ static void	*philo_routine(void *arg)
 
 	philo = (t_philo *)arg;
 	table = philo->table;
-	//dprintf(STDOUT_FILENO, "\n[philo_routine] [philo_id] %d\n", philo->id);
-	philo_wait(philo->table); //synchronize all philos
-	//we need to de-syncronize philos to make all philos think
-	set_last_meal_time(philo);
+	philo_wait(philo->table);
+	set_long(&philo->philo_mtx, &philo->t_last_meal, ft_gettime(MILLISECOND));
 	add_long(&(table->table_mtx), &(table->philos_running_nbr), 1);
 	de_synchronize_philos(philo);
-	while (is_finished(table) == 0)
+	while (is_table_finished(table) == 0)
 	{
-		if (philo->is_full) //THREAD SAFE?
+		if (get_bool(&philo->philo_mtx, &philo->is_full) == 1)
 			return (NULL);
 		philo_eat(philo);
 		philo_sleep(philo);
@@ -45,55 +50,36 @@ static void	*philo_routine(void *arg)
 	return (NULL);
 }
 
-/**
- * use example
- * ./philo 5 800 200 200 (5)
- * 
- * 		- If no meals -> return (0)
- * 		- If only 1 philo -> adhoc function
- * 
- * 		- Create all threads (all philos)
- * 		- Create a monitor thread -> search for dead philos
- * 		- Syncronize the beginning of the simulation
- * 		- Join everyone
-*/
-
-int	philo_dinner(t_table *table)
+static int	philos_launch(t_table *table)
 {
 	int		i;
+	int		j;
 	t_philo	*philo;
-	int		*monitor_status;
 
-	monitor_status = NULL;
-	//dprintf(STDOUT_FILENO, "\n[dinner_start]\n");
-	if (table->meal_limit == 0)
-		return (0);
-	// if (table->philos_nbr == 1)
-	// 	return (single_philo_routine(table));
-
-	//monitor philo's threadds
-	if (safe_thr_handle(&(table->monitor), philo_monitor, table, NULL, CREATE) < 0)
-		return (-1);
 	i = -1;
 	while (++i < table->philos_nbr)
 	{
 		philo = &(table->philos[i]);
-		//dprintf(STDOUT_FILENO, "starts routine [philo_id] %d [create thread] ", philo->id);
-		if (safe_thr_handle(&(philo->id_thread), philo_routine, philo, NULL, CREATE) < 0)
-			return (-1); //error -> might need to clean threads
+		if (safe_thr_handle(&(philo->id_thread), philo_routine, philo, NULL,
+				CREATE) < 0)
+		{
+			j = -1;
+			while (++j < i)
+			{
+				philo = &(table->philos[j]);
+				safe_thr_handle(&(philo->id_thread), NULL, NULL, NULL, DETACH);
+			}
+			return (-1);
+		}
 	}
-	/*
-		si i == nbr de philos
-		bool = true
- 	*/
-	
-	//gettime of dinner start
-	table->t_start = ft_gettime(MILLISECOND);
-	if (table->t_start < 0)
-		return (-1);
-	//now all threads are aready, after all are created
-	set_bool(&table->table_mtx, &table->is_ready, 1);
-	//join
+	return (0);
+}
+
+static int	philos_join(t_table *table)
+{
+	int		i;
+	t_philo	*philo;
+
 	i = -1;
 	while (++i < table->philos_nbr)
 	{
@@ -101,11 +87,41 @@ int	philo_dinner(t_table *table)
 		if (safe_thr_handle(&(philo->id_thread), NULL, NULL, NULL, JOIN) < 0)
 			return (-1);
 	}
-	//if we manage to reach this point all philos are full
-	set_bool(&table->table_mtx, &table->is_finished, 1); //DATARACE
-	if (safe_thr_handle(&table->monitor, NULL, NULL, (void *)&monitor_status, JOIN) < 0)
+	return (0);
+}
+
+/**
+ * Dinner logic:
+ *
+ * - launch monitor thread
+ * - launch each philo thread
+ * - set time of dinner start
+ * - set is ready bool
+ * 			now is when all philos do their routine until the monitor founds
+ * 			someone dead
+ * - join philos (terminate all threads)
+ * - join monitor -> get the return value (status, check if there were errors)
+ */
+int	philo_dinner(t_table *table)
+{
+	int		*monitor_status;
+
+	monitor_status = NULL;
+	if (table->meal_limit == 0)
+		return (0);
+	if (safe_thr_handle(&(table->monitor), philo_monitor, table, NULL,CREATE) < 0)
 		return (-1);
-	//Check monitor_status to check the return
+	if (philos_launch(table) < 0)
+		return (-1);
+	table->t_start = ft_gettime(MILLISECOND);
+	if (table->t_start < 0)
+		return (-1);
+	set_bool(&table->table_mtx, &table->is_ready, 1);
+	if (philos_join(table) < 0)
+		return (-1);
+	set_bool(&table->table_mtx, &table->is_finished, 1);
+	if (safe_thr_handle(&table->monitor, NULL, NULL, (void *)&monitor_status,JOIN) < 0)
+		return (-1);
 	if (monitor_status && (intptr_t)monitor_status < 0)
 		return (-1);
 	return (0);
