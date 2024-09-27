@@ -1,6 +1,18 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   table_init.c                                       :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: luciama2 <luciama2@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/09/27 19:15:19 by luciama2          #+#    #+#             */
+/*   Updated: 2024/09/27 19:18:09 by luciama2         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "philo.h"
 
-static int convert_parse(long *data, char **argv, int argidx)
+static int	convert_parse(long *data, char **argv, int argidx)
 {
 	int			flag;
 	const int	t_min = 0;
@@ -29,7 +41,7 @@ static int	parse_input(t_table *table, char **argv)
 		return (-1);
 	if (convert_parse(&(table->t_to_die), argv, 2) < 0)
 		return (-1);
-	table->t_to_die *= 1e3; //convert millisecond to microsecond
+	table->t_to_die *= 1e3;
 	if (convert_parse(&(table->t_to_eat), argv, 3) < 0)
 		return (-1);
 	table->t_to_eat *= 1e3;
@@ -37,7 +49,7 @@ static int	parse_input(t_table *table, char **argv)
 		return (-1);
 	table->t_to_sleep *= 1e3;
 	if (argv[5])
-	{	
+	{
 		if (convert_parse(&(table->meal_limit), argv, 5) < 0)
 			return (-1);
 	}
@@ -46,23 +58,22 @@ static int	parse_input(t_table *table, char **argv)
 	return (0);
 }
 
-static int forks_init(t_table *table)
+static int	forks_init(t_table *table)
 {
-	int	i;
-	t_fork *fork;
+	int		i;
+	t_fork	*fork;
 
-	//dprintf(STDOUT_FILENO, "\n[phorks_init]\n");
 	i = -1;
 	while (++i < table->philos_nbr)
 	{
 		fork = &(table->forks[i]);
 		table->forks[i].id = i;
-		//dprintf(STDOUT_FILENO, "[fork_id] %d [mutex init, fork] ", table->forks[i].fork_id);
-		if (safe_mtx_handle(&(fork->fork_mtx), INIT) < 0)
+		if (safe_mutex(&(fork->fork_mtx), INIT) < 0)
 			return (error_print("Error on fork init"));
 	}
 	return (0);
 }
+
 /**
  * assing forks, 
  * 	all even philos pick 'even' fork first, there's a modulus 4the circularity
@@ -70,21 +81,19 @@ static int forks_init(t_table *table)
  */
 static void	philos_init(t_table *table)
 {
-	int	i;
-	t_philo *philo;
+	int		i;
+	t_philo	*philo;
 
 	i = -1;
-	//dprintf(STDOUT_FILENO, "\n[philos_init]\n");
 	while (++i < table->philos_nbr)
 	{
 		philo = &(table->philos[i]);
 		philo->id = i + 1;
 		philo->meals_count = 0;
-		philo->is_full = 0;//false
+		philo->is_full = 0;
 		philo->t_last_meal = 0;
 		philo->table = table;
-		//dprintf(STDOUT_FILENO, "[philo_id] %d [mutex init, philo_mtx] ", philo->id);
-		safe_mtx_handle(&philo->philo_mtx, INIT);
+		safe_mutex(&philo->philo_mtx, INIT);
 		if (philo->id % 2)
 		{
 			philo->first_fork = &table->forks[(i + 1) % table->philos_nbr];
@@ -99,24 +108,21 @@ static void	philos_init(t_table *table)
 }
 
 int	table_init(t_table *table, char **argv)
-{	
-	//dprintf(STDOUT_FILENO, "\n[table_init]\n");
+{
 	if (parse_input(table, argv) < 0)
 		return (-1);
-	table->is_finished = 0; //false
-	table->is_ready = 0; //false
+	table->is_finished = 0;
+	table->is_ready = 0;
 	table->philos_running_nbr = 0;
-	table->philos = safe_malloc((table->philos_nbr) * sizeof(t_philo)); //array of philos
+	table->philos = safe_malloc((table->philos_nbr) * sizeof(t_philo));
 	if (!table->philos)
 		return (-1);
-	table->forks = safe_malloc((table->philos_nbr) * sizeof(t_fork)); //array of forks
+	table->forks = safe_malloc((table->philos_nbr) * sizeof(t_fork));
 	if (!table->forks)
 		return (-1);
-	//dprintf(STDOUT_FILENO, "[mutex init, table_mtx]\t");
-	if (safe_mtx_handle(&table->table_mtx, INIT) < 0) //thread to monitor table
+	if (safe_mutex(&table->table_mtx, INIT) < 0)
 		return (-1);
-	//dprintf(STDOUT_FILENO, "[mutex init, write_mtx]\t");
-	if (safe_mtx_handle(&table->write_mtx, INIT) < 0)
+	if (safe_mutex(&table->write_mtx, INIT) < 0)
 		return (-1);
 	forks_init(table);
 	philos_init(table);

@@ -6,7 +6,7 @@
 /*   By: luciama2 <luciama2@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/26 19:52:35 by luciama2          #+#    #+#             */
-/*   Updated: 2024/09/26 21:03:33 by luciama2         ###   ########.fr       */
+/*   Updated: 2024/09/27 19:36:24 by luciama2         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,35 +20,34 @@
  * 		0	-> OK
  * 		-1	-> mutex handle error
  */
-static int are_all_philos_running(t_table *table)
+static int	are_all_philos_running(t_table *table)
 {
-	int rslt;
+	int	rslt;
 
 	rslt = 0;
-	if (safe_mtx_handle(&(table->table_mtx), LOCK) < 0)
+	if (safe_mutex(&(table->table_mtx), LOCK) < 0)
 		return (-1);
 	if (table->philos_running_nbr == table->philos_nbr)
 		rslt = 1;
-	if (safe_mtx_handle(&(table->table_mtx), UNLOCK) < 0)
+	if (safe_mutex(&(table->table_mtx), UNLOCK) < 0)
 		return (-1);
 	return (rslt);
 }
 
-static int is_philo_dead(t_philo *philo)
+static int	is_philo_dead(t_philo *philo)
 {
-	long t_last_meal;
-	long elapsed;
-	long t_to_die;
+	long	t_last_meal;
+	long	elapsed;
+	long	t_to_die;
 
 	if (get_bool(&(philo->philo_mtx), &(philo->is_full)) == 1)
 		return (0);
 	t_last_meal = get_long(&(philo->philo_mtx), &(philo->t_last_meal));
 	elapsed = ft_gettime(MILLISECOND) - (t_last_meal);
-	// convert back to millisecond
 	t_to_die = (((t_table *)(philo->table))->t_to_die) / 1e3;
 	if (elapsed > t_to_die)
-		return (1); //1 -> true, philo is dead
-	return (0); // 0 flase, philo is alive
+		return (1);
+	return (0);
 }
 
 /**
@@ -58,24 +57,24 @@ static int is_philo_dead(t_philo *philo)
  * 
  * If a philo dies, then we update that variable
  */
-// static int is_dinner_running(t_table *table)
-// {
-// 	int		i;
-// 	t_philo	*philo;
+static int	is_dinner_running(t_table *table)
+{
+	int		i;
+	t_philo	*philo;
 
-// 	i = -1;
-// 	while (++i < table->philos_nbr && is_table_finished(table) == 0)
-// 	{
-// 		philo = &(table->philos[i]);
-// 		if (is_philo_dead(philo) == 1)
-// 		{
-// 			set_bool(&(table->table_mtx), &(table->is_finished), 1);
-// 			write_status(philo, DIE, DEBUG);
-// 			return (-1);
-// 		}
-// 	}
-// 	return (0);
-// }
+	i = -1;
+	while (++i < table->philos_nbr && is_table_finished(table) == 0)
+	{
+		philo = &(table->philos[i]);
+		if (is_philo_dead(philo) == 1)
+		{
+			set_bool(&(table->table_mtx), &(table->is_finished), 1);
+			write_status(philo, DIE, DEBUG);
+			return (-1);
+		}
+	}
+	return (0);
+}
 
 /**
  * Monitor logic
@@ -84,12 +83,10 @@ static int is_philo_dead(t_philo *philo)
  * 2 - Checks if a philo must die while dinner isn't finished
  *
  */
-void *philo_monitor(void *data)
+void	*monitor(void *data)
 {
 	int		status;
 	t_table	*table;
-	t_philo *philo;
-	int i;
 
 	table = data;
 	status = are_all_philos_running(table);
@@ -101,19 +98,8 @@ void *philo_monitor(void *data)
 	}
 	while (is_table_finished(table) == 0)
 	{
-		i = -1;
-		while (++i < table->philos_nbr && is_table_finished(table) == 0)
-		{
-			philo = &(table->philos[i]);
-			if (is_philo_dead(philo) == 1)
-			{
-				set_bool(&(table->table_mtx), &(table->is_finished), 1);
-				write_status(philo, DIE, DEBUG);
-				return ((void *)0);
-			}
-		}
-		// if (is_dinner_running(table) < 0)
-		// 	return ((void *)0);
+		if (is_dinner_running(table) < 0)
+			return ((void *)0);
 	}
 	return (NULL);
 }

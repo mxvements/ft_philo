@@ -1,6 +1,6 @@
 NAME=philo
 CC=gcc
-CFLAGS=-Wall -Wextra -Werror -g3 -fsanitize=thread
+CFLAGS=-Wall -Wextra -Werror -g3
 
 #philo
 PHILO_PATH=		./
@@ -13,8 +13,7 @@ PHILO_FILES=	philo.c \
 				philo_monitor.c \
 				pthread_handle.c \
 				table_init.c \
-				table_destroy.c \
-				table_clean.c \
+				table_free.c \
 				table_utils.c \
 				ft_atolf.c \
 				ft_usleep.c \

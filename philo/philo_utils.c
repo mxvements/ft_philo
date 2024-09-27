@@ -6,7 +6,7 @@
 /*   By: luciama2 <luciama2@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/25 21:06:26 by luciama2          #+#    #+#             */
-/*   Updated: 2024/09/26 20:49:23 by luciama2         ###   ########.fr       */
+/*   Updated: 2024/09/27 19:01:19 by luciama2         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,9 +73,9 @@ void	write_status(t_philo *philo, t_status status, int debug)
 
 	table = philo->table;
 	elapsed = ft_gettime(MILLISECOND) - ((t_table *)philo->table)->t_start;
-	if (philo->is_full == 1) //TODO: THREAD_SAFE?
+	if (get_bool(&philo->philo_mtx, &philo->is_full) == 1)
 		return ;
-	safe_mtx_handle(&table->write_mtx, LOCK);
+	safe_mutex(&table->write_mtx, LOCK);
 	if (debug)
 		write_status_debug(philo, status, elapsed);
 	else
@@ -92,5 +92,5 @@ void	write_status(t_philo *philo, t_status status, int debug)
 		else if (status == DIE)
 			printf(RED"%-6ld %d died\n"RESET, elapsed, philo->id);
 	}
-	safe_mtx_handle(&table->write_mtx, UNLOCK);
+	safe_mutex(&table->write_mtx, UNLOCK);
 }

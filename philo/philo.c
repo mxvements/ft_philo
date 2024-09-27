@@ -6,7 +6,7 @@
 /*   By: luciama2 <luciama2@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/25 20:39:47 by luciama2          #+#    #+#             */
-/*   Updated: 2024/09/26 21:17:43 by luciama2         ###   ########.fr       */
+/*   Updated: 2024/09/27 18:27:57 by luciama2         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,8 +33,7 @@
  *		3 310 103 103 (tienen que vivir) 
  *		3 310 104 104 (tienen que morir)
  * 
- * 		210 100 200 200 (no deberian morir)
- * y si no te lo hace bien te lo tire
+ * 		210 310 103 104 (no deberian morir)
 
  * ncdu  en el directorio root para ver el cache
 

@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   pthread_handle.c                                   :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: luciama2 <luciama2@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/09/27 18:28:55 by luciama2          #+#    #+#             */
+/*   Updated: 2024/09/27 18:58:16 by luciama2         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "philo.h"
 
 /**
@@ -43,15 +55,16 @@ static int	pthr_error(int status)
 		return (error_print("Resource deadlock avoided"));
 	else if (status == EBUSY)
 		return (error_print("Device or resource busy"));
-	// else if (status == ESRCH)
-	// 	error_exit("No such process");
+	else if (status == ESRCH)
+		return (error_print("No such process"));
 	return (0);
 }
 
 /**
  * mutex functs:
-* 		pthread_mutex_init
- * 			(pthread_mutex_t *restrict mutex, const pthread_mutexattr_t *restrict attr)
+ * 		pthread_mutex_init
+ * 			(pthread_mutex_t *restrict mutex,
+ * 			const pthread_mutexattr_t *restrict attr)
  * 		pthread_mutex_destroy
  * 			(pthread_mutex_t *mutex)
  * 		pthread_mutex_lock
@@ -66,7 +79,7 @@ static int	pthr_error(int status)
  * to debug use:
  * 		dprintf(STDOUT_FILENO, "opthr: %d\n", opthr)
  */
-int	safe_mtx_handle(t_mtx *mutex, t_opthread opthr)
+int	safe_mutex(t_mtx *mutex, t_opthrd opthr)
 {
 	if (opthr == INIT)
 		return (pthr_error(pthread_mutex_init(mutex, NULL)));
@@ -97,14 +110,12 @@ int	safe_mtx_handle(t_mtx *mutex, t_opthread opthr)
  * to debug use:
  * 		dprintf(STDOUT_FILENO, "opthr: %d\n", opthr)
  */
-int	safe_thr_handle(pthread_t *thr, void *(*f)(void *), void *data,
-	void **join_rtrn, t_opthread opthr)
+int	safe_thread(pthread_t *thr, void *(*f)(void *), void *data, t_opthrd opthr)
 {
-	//dprintf(STDOUT_FILENO, "opthr: %d\n", opthr);
 	if (opthr == CREATE)
 		return (pthr_error(pthread_create(thr, NULL, f, data)));
 	else if (opthr == JOIN)
-		return (pthr_error(pthread_join(*thr, join_rtrn)));
+		return (pthr_error(pthread_join(*thr, &data)));
 	else if (opthr == DETACH)
 		return (pthr_error(pthread_detach(*thr)));
 	else

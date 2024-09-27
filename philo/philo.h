@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   philo.h                                            :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: luciama2 <luciama2@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/09/27 19:18:33 by luciama2          #+#    #+#             */
+/*   Updated: 2024/09/27 19:19:50 by luciama2         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #ifndef PHILO_H
 # define PHILO_H
 
@@ -56,7 +68,7 @@ typedef pthread_mutex_t	t_mtx;
  * 		pthread_mutex_lock
  * 		pthread_mutex_unlock
  */
-typedef enum	e_opthread
+typedef enum e_opthrd
 {
 	CREATE,
 	DETACH,
@@ -65,16 +77,16 @@ typedef enum	e_opthread
 	DESTROY,
 	LOCK,
 	UNLOCK
-}	t_opthread;
+}	t_opthrd;
 
-typedef enum	e_time
+typedef enum e_time
 {
 	SECOND,
 	MILLISECOND,
 	MICROSECOND
 }	t_time;
 
-typedef enum	e_status
+typedef enum e_status
 {
 	EAT,
 	SLEEP,
@@ -84,7 +96,7 @@ typedef enum	e_status
 	DIE
 }	t_status;
 
-typedef struct	s_fork
+typedef struct s_fork
 {
 	t_mtx	fork_mtx;
 	int		id;
@@ -113,7 +125,7 @@ typedef struct s_table
 	long		t_to_eat;
 	long		t_to_sleep;
 	long		meal_limit;
-	int			is_finished; 
+	int			is_finished;
 	int			is_ready;
 	t_fork		*forks;
 	t_philo		*philos;
@@ -151,12 +163,12 @@ void	philo_sleep(t_philo *philo);
 void	philo_eat(t_philo *philo);
 
 /* pthread hanlders */
-int		safe_mtx_handle(t_mtx *mutex, t_opthread opthread);
-int		safe_thr_handle(pthread_t *thr, void *(*f)(void *), void *data,
-			void **join_rtrn, t_opthread opthr);
+int		safe_mutex(t_mtx *mutex, t_opthrd opthread);
+int		safe_thread(pthread_t *thr, void *(*f)(void *), void *data,
+			t_opthrd opthr);
 
 /* monitor */
-void	*philo_monitor(void *data);
+void	*monitor(void *data);
 
 /* aux functions*/
 long	ft_atolf(char *s, int *flag);

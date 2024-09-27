@@ -6,7 +6,7 @@
 /*   By: luciama2 <luciama2@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/25 21:15:57 by luciama2          #+#    #+#             */
-/*   Updated: 2024/09/26 21:12:29 by luciama2         ###   ########.fr       */
+/*   Updated: 2024/09/27 18:21:38 by luciama2         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -92,9 +92,9 @@ void	philo_sleep(t_philo *philo)
  */
 void	philo_eat(t_philo *philo)
 {
-	safe_mtx_handle(&philo->first_fork->fork_mtx, LOCK);
+	safe_mutex(&philo->first_fork->fork_mtx, LOCK);
 	write_status(philo, FRST_FORK, DEBUG);
-	safe_mtx_handle(&philo->secnd_fork->fork_mtx, LOCK);
+	safe_mutex(&philo->secnd_fork->fork_mtx, LOCK);
 	write_status(philo, SCND_FORK, DEBUG);
 	set_long(&philo->philo_mtx, &philo->t_last_meal, ft_gettime(MILLISECOND));
 	philo->meals_count++;
@@ -103,6 +103,6 @@ void	philo_eat(t_philo *philo)
 	if (philo->table->meal_limit > 0
 		&& philo->meals_count == philo->table->meal_limit)
 		set_bool(&philo->philo_mtx, &philo->is_full, 1);
-	safe_mtx_handle(&philo->first_fork->fork_mtx, UNLOCK);
-	safe_mtx_handle(&philo->secnd_fork->fork_mtx, UNLOCK);
+	safe_mutex(&philo->first_fork->fork_mtx, UNLOCK);
+	safe_mutex(&philo->secnd_fork->fork_mtx, UNLOCK);
 }

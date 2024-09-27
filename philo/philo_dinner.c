@@ -6,7 +6,7 @@
 /*   By: luciama2 <luciama2@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/25 21:15:59 by luciama2          #+#    #+#             */
-/*   Updated: 2024/09/26 20:49:23 by luciama2         ###   ########.fr       */
+/*   Updated: 2024/09/27 18:49:55 by luciama2         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,7 @@
  * 		* this is where the infinite loop of the philos happens
  * 		(table->is-finished) only gets updated when a philo dies or they're full
  */
-static void	*philo_routine(void *arg)
+static void	*routine(void *arg)
 {
 	t_philo	*philo;
 	t_table	*table;
@@ -60,14 +60,13 @@ static int	philos_launch(t_table *table)
 	while (++i < table->philos_nbr)
 	{
 		philo = &(table->philos[i]);
-		if (safe_thr_handle(&(philo->id_thread), philo_routine, philo, NULL,
-				CREATE) < 0)
+		if (safe_thread(&(philo->id_thread), routine, philo, CREATE) < 0)
 		{
 			j = -1;
 			while (++j < i)
 			{
 				philo = &(table->philos[j]);
-				safe_thr_handle(&(philo->id_thread), NULL, NULL, NULL, DETACH);
+				safe_thread(&(philo->id_thread), NULL, NULL, DETACH);
 			}
 			return (-1);
 		}
@@ -84,7 +83,7 @@ static int	philos_join(t_table *table)
 	while (++i < table->philos_nbr)
 	{
 		philo = &(table->philos[i]);
-		if (safe_thr_handle(&(philo->id_thread), NULL, NULL, NULL, JOIN) < 0)
+		if (safe_thread(&(philo->id_thread), NULL, NULL, JOIN) < 0)
 			return (-1);
 	}
 	return (0);
@@ -104,12 +103,12 @@ static int	philos_join(t_table *table)
  */
 int	philo_dinner(t_table *table)
 {
-	int		*monitor_status;
+	int		*status;
 
-	monitor_status = NULL;
+	status = NULL;
 	if (table->meal_limit == 0)
 		return (0);
-	if (safe_thr_handle(&(table->monitor), philo_monitor, table, NULL,CREATE) < 0)
+	if (safe_thread(&(table->monitor), monitor, table, CREATE) < 0)
 		return (-1);
 	if (philos_launch(table) < 0)
 		return (-1);
@@ -120,9 +119,9 @@ int	philo_dinner(t_table *table)
 	if (philos_join(table) < 0)
 		return (-1);
 	set_bool(&table->table_mtx, &table->is_finished, 1);
-	if (safe_thr_handle(&table->monitor, NULL, NULL, (void *)&monitor_status,JOIN) < 0)
+	if (safe_thread(&table->monitor, NULL, (void *)&status, JOIN) < 0)
 		return (-1);
-	if (monitor_status && (intptr_t)monitor_status < 0)
+	if (status && (intptr_t)status < 0)
 		return (-1);
 	return (0);
 }
