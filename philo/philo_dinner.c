@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   philo_dinner.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: luciama2 <luciama2@student.42.fr>          +#+  +:+       +#+        */
+/*   By: lucia <lucia@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/25 21:15:59 by luciama2          #+#    #+#             */
-/*   Updated: 2024/10/21 21:17:41 by luciama2         ###   ########.fr       */
+/*   Updated: 2024/10/22 00:06:08 by lucia            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -95,8 +95,19 @@ static int	philos_join(t_table *table)
 
 static int lone_philo(t_table *table)
 {
-	(void)table;
-	dprintf(2, "TODO: lone philo\n");
+	t_philo	*philo;
+	
+	philo = &(table->philos[0]);
+	
+	table->t_start = ft_gettime(MILLISECOND);
+	set_bool(&table->table_mtx, &table->is_ready, 1);
+	set_long(&philo->philo_mtx, &philo->t_last_meal, ft_gettime(MILLISECOND));	
+	safe_mutex(&philo->first_fork->fork_mtx, LOCK);
+	write_status(philo, FRST_FORK, DEBUG);
+	ft_usleep(philo->table, philo->table->t_to_die);
+	safe_mutex(&philo->first_fork->fork_mtx, UNLOCK);
+	set_bool(&(table->table_mtx), &(table->is_finished), 1);
+	write_status(philo, DIE, DEBUG);
 	return (0);
 }
 
@@ -119,7 +130,7 @@ int	philo_dinner(t_table *table)
 	status = NULL;
 	if (table->meal_limit == 0)
 		return (0);
-	if (table->philos_nbr == 1)
+	if (table->philos_nbr == 1) //HARDCODED
 		return (lone_philo(table));
 	if (safe_thread(&(table->monitor), monitor, table, CREATE) < 0)
 		return (-1);
