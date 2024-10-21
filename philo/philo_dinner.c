@@ -6,12 +6,14 @@
 /*   By: luciama2 <luciama2@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/25 21:15:59 by luciama2          #+#    #+#             */
-/*   Updated: 2024/09/27 18:49:55 by luciama2         ###   ########.fr       */
+/*   Updated: 2024/10/21 21:17:41 by luciama2         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
 #include <stdint.h>
+
+
 
 /**
  * Philo routine logic:
@@ -77,15 +79,24 @@ static int	philos_launch(t_table *table)
 static int	philos_join(t_table *table)
 {
 	int		i;
+	int		status;
 	t_philo	*philo;
 
 	i = -1;
 	while (++i < table->philos_nbr)
 	{
 		philo = &(table->philos[i]);
-		if (safe_thread(&(philo->id_thread), NULL, NULL, JOIN) < 0)
+		status = safe_thread(&(philo->id_thread), NULL, NULL, JOIN);
+		if (status < 0)
 			return (-1);
 	}
+	return (0);
+}
+
+static int lone_philo(t_table *table)
+{
+	(void)table;
+	dprintf(2, "TODO: lone philo\n");
 	return (0);
 }
 
@@ -108,6 +119,8 @@ int	philo_dinner(t_table *table)
 	status = NULL;
 	if (table->meal_limit == 0)
 		return (0);
+	if (table->philos_nbr == 1)
+		return (lone_philo(table));
 	if (safe_thread(&(table->monitor), monitor, table, CREATE) < 0)
 		return (-1);
 	if (philos_launch(table) < 0)

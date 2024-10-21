@@ -6,7 +6,7 @@
 /*   By: luciama2 <luciama2@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/26 19:52:35 by luciama2          #+#    #+#             */
-/*   Updated: 2024/09/27 19:36:24 by luciama2         ###   ########.fr       */
+/*   Updated: 2024/10/21 21:15:38 by luciama2         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -99,7 +99,9 @@ void	*monitor(void *data)
 	while (is_table_finished(table) == 0)
 	{
 		if (is_dinner_running(table) < 0)
+		{
 			return ((void *)0);
+		}
 	}
 	return (NULL);
 }

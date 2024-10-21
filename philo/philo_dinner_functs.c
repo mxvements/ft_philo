@@ -6,7 +6,7 @@
 /*   By: luciama2 <luciama2@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/25 21:15:57 by luciama2          #+#    #+#             */
-/*   Updated: 2024/09/27 18:21:38 by luciama2         ###   ########.fr       */
+/*   Updated: 2024/10/21 20:39:50 by luciama2         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,6 +23,8 @@
  */
 void	philo_wait(t_table *table)
 {
+	if (table->philos_nbr == 1)
+		return ;
 	while (get_bool(&table->table_mtx, &table->is_ready) == 0)
 		;
 }
